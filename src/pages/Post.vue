@@ -52,9 +52,11 @@ const confirm = (val, id) => {
     },
     persistent: true,
   })
-    .onOk(async () => {
-      await deletePosts(val, id);
-      await alertSuccess("ลบโพสต์สำเร็จ", "คุณได้ทำการลบโพสสำเร็จแล้ว");
+    .onOk(() => {
+      const deleteFirst = deletePosts(val, id);
+      // const deleteSecound = await deletePost(val, id);
+
+      alertSuccess("ลบโพสต์สำเร็จ", "คุณได้ทำการลบโพสสำเร็จแล้ว");
     })
 
     .onCancel(() => {
@@ -63,9 +65,12 @@ const confirm = (val, id) => {
 };
 const deletePosts = async (val, id) => {
   console.log(val, id);
-  await deleteImgPost(id);
+  const deleteFirst = await deleteImg(id);
   const deletePostId = await deletePost(id);
   PostData.value.splice(val, 1);
+};
+const deleteImg = async (id) => {
+  const response = await deleteImgPost(id);
 };
 onMounted(() => {
   Post();

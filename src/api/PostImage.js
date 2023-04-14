@@ -31,7 +31,7 @@ export const PostImageApi = () => {
   const deletePost = async (id) => {
     return await callApi({
       method: "DELETE",
-      url: `/socialDeleteImage?_ids=${id}`,
+      url: `/socialMsg?_ids=${id}`,
     });
   };
   const deleteImgPost = async (id) => {
