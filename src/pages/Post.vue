@@ -53,14 +53,16 @@ const confirm = (val, id) => {
     persistent: true,
   })
     .onOk(async () => {
-      await alertSuccess("ลบโพสต์สำเร็จ", "คุณได้ทำการลบโพสสำเร็จแล้ว");
       await deletePosts(val, id);
+
+      await alertSuccess("ลบโพสต์สำเร็จ", "คุณได้ทำการลบโพสสำเร็จแล้ว");
     })
 
     .onCancel(() => {
       alertWarning();
     });
 };
+
 const deletePosts = async (val, id) => {
   console.log(val, id);
   await deleteImgPost(id);

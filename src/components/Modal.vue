@@ -117,7 +117,7 @@ const imageFile = (file = []) => {
     });
   }
 };
-const postData = async (e) => {
+const postData = async () => {
   Loading.show({
     spinner: QSpinnerGears,
   });
