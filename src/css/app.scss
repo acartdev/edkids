@@ -1,0 +1,16 @@
+// app global css in SCSS form
+@font-face {
+  font-family: th_default;
+  src: url("../assets/Kanit/Kanit-Regular.ttf");
+}
+@font-face {
+  font-family: en_default;
+  src: url("../assets/Righteous/Righteous-Regular.ttf");
+}
+* {
+  font-family: th_default;
+  scroll-behavior: smooth;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,0 +1,582 @@
+<!-- eslint-disable vue/multi-word-component-names -->
+// eslint-disable-next-line vue/multi-word-component-names
+<template>
+  <q-page class="">
+    <div class="row fit">
+      <div
+        class="col-sm-8 q-mx-auto q-mt-md bg-yellow-3 q-py-sm q-px-lg text-amber-8"
+        style="border-radius: 5px"
+      >
+        <span class="text- text-weight-bold">กรุณากรอก!!</span>
+        ข้อมูลให้ครบถ้วนและถูกต้องตามหลักความเป็นจริง
+        และได้รับการยืนยันจากเจ้าของข้อมูลโดยตรงเสียก่อน
+      </div>
+    </div>
+    <q-form @submit="create()">
+      <div class="row items-center justify-center q-mt-xl">
+        <q-card class="col-sm-8 no-shadow">
+          <q-tabs
+            v-model="tab"
+            dense
+            class="text-grey"
+            active-color="secondary"
+            indicator-color="secondary"
+            align="justify"
+            narrow-indicator
+          >
+            <q-tab name="mails" label="ผู้ปกครอง" />
+            <q-tab name="alarms" label="นักเรียน" />
+          </q-tabs>
+
+          <q-separator />
+
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel class="col-sm-7" name="mails">
+              <div class="row q-gutter-sm justify-around q-mt-sm">
+                <div class="col-sm-12 q-pl-lg flex">
+                  <q-file
+                    outlined
+                    color="teal"
+                    v-model="imageFile.parent"
+                    dense
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="image" />
+                    </template>
+                  </q-file>
+                  <p class="text-center q-pt-sm q-ml-sm">รูปภาพของผู้ปกครอง</p>
+                </div>
+                <div class="col-sm-5">
+                  <label for="">ชื่อจริง:</label>
+                  <q-input
+                    v-model="parent.first_name"
+                    outlined
+                    dense
+                    autofocus
+                    color="teal"
+                    label="ชื่อจริง"
+                    :rules="[(val) => !!val || 'กรุณากรอกชื่อจริง']"
+                  />
+                </div>
+
+                <div class="col-sm-5">
+                  <label for="">นามสกุลจริง:</label>
+
+                  <q-input
+                    v-model="parent.last_name"
+                    outlined
+                    dense
+                    color="teal"
+                    label="นามสกุล"
+                    :rules="[(val) => !!val || 'กรุณากรอกนามสกุลห']"
+                  />
+                </div>
+              </div>
+              <div class="row items-center q-gutter-md justify-center q-mt-sm">
+                <div class="col-sm-3">
+                  <label for="">ชื่อเล่น:</label>
+
+                  <q-input
+                    v-model="parent.nick_name"
+                    outlined
+                    dense
+                    color="teal"
+                    label="ชื่อเล่น"
+                    :rules="[(val) => !!val || 'กรุณากรอกชื่อเล่น']"
+                  />
+                </div>
+                <div class="col-sm-1">
+                  <q-input v-model="old.parent" label="อายุ" disable></q-input>
+                </div>
+                <div class="col-sm-1 q-mr-md q-pt-lg">
+                  <p class="text-h6">ปี</p>
+                </div>
+                <div class="col-sm-5">
+                  <label for="">วัน/เดือน/ปี เกิด:</label>
+                  <q-input
+                    @blur="getYear()"
+                    color="teal"
+                    v-model="parent.birth_date"
+                    type="date"
+                    :rules="[(val) => !!val || 'กรุณากรอกวันเดือนปีเกิด']"
+                  />
+                </div>
+              </div>
+              <div class="row justify-around q-gutter-sm items-center q-mt-sm">
+                <div class="col-sm-5">
+                  <label for="">อาชีพ:</label>
+                  <q-input
+                    v-model="parent.ocupation"
+                    label="วิศวกร"
+                    outlined
+                    color="teal"
+                    dense
+                    :rules="[(val) => !!val || 'กรุณากรอกอาชีพ']"
+                  ></q-input>
+                </div>
+                <div class="col-sm-5">
+                  <label for="">อีเมลล์:</label>
+                  <q-input
+                    v-model="parent.email"
+                    label="parentEmail@domain.com"
+                    outlined
+                    dense
+                    color="teal"
+                    :rules="[(val) => !!val || 'กรุณากรอกอีเมล']"
+                  ></q-input>
+                </div>
+              </div>
+              <div class="row justify-around q-gutter-sm items-center q-mt-sm">
+                <div class="col-sm-4">
+                  <label for="">เบอร์โทรศัพท์:</label>
+                  <q-input
+                    v-model="parent.phone"
+                    mask="###-###-####"
+                    outlined
+                    color="teal"
+                    dense
+                    label="088-888-8888"
+                    :rules="[(val) => !!val || 'กรุณากรอกเบอร์โทรศัพท์']"
+                  ></q-input>
+                </div>
+                <div class="col-sm-2 q-pt-md"></div>
+                <div class="col-sm-3">
+                  <label for="">รหัสไปรษณีย์:</label>
+                  <q-input
+                    v-model="parent.zip_code"
+                    color="teal"
+                    outlined
+                    dense
+                  ></q-input>
+                </div>
+              </div>
+              <div class="flex justify-end items-center q-mt-md q-mr-lg">
+                <div class="">
+                  <q-btn
+                    @click="checkParent()"
+                    class="text-teal"
+                    outline
+                    rounded
+                    :icon-right="biArrowBarRight"
+                    label="นักเรียน "
+                    align="left"
+                  >
+                  </q-btn>
+                </div>
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="alarms">
+              <div class="row q-gutter-sm justify-around q-mt-sm">
+                <div class="col-sm-6 q-pl-lg flex">
+                  <q-file
+                    outlined
+                    color="teal"
+                    dense
+                    v-model="imageFile.student"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="image" />
+                    </template>
+                  </q-file>
+                  <p class="text-center q-pt-sm q-ml-sm">รูปภาพของนักเรียน</p>
+                </div>
+                <div class="col-sm-5 flex justify-end items-center">
+                  <q-btn icon="add" @click="addMore()" dense color="teal">
+                    <q-tooltip> เพิ่มนักเรียนกรณีมีมากกว่า1คน </q-tooltip>
+                  </q-btn>
+                </div>
+                <div class="col-sm-11">
+                  <q-radio
+                    keep-color
+                    v-model="student.gender"
+                    :val="true"
+                    label="เด็กชาย"
+                    color="teal"
+                  />
+                  <q-radio
+                    keep-color
+                    v-model="student.gender"
+                    :val="false"
+                    label="เด็กหญิง"
+                    color="pink"
+                  />
+                </div>
+                <div class="col-sm-5">
+                  <label for="">ชื่อจริง:</label>
+                  <q-input
+                    v-model="student.first_name"
+                    :rules="[(val) => !!val || 'กรุณากรอกชื่อนักเรียน']"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="ชื่อจริง"
+                  />
+                </div>
+                <div class="col-sm-5">
+                  <label for="">นามสกุลจริง:</label>
+
+                  <q-input
+                    v-model="student.last_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="นามสกุล"
+                    :rules="[(val) => !!val || 'กรุณากรอกนามสกุลนักเรียน']"
+                  />
+                </div>
+              </div>
+              <div class="row items-center q-gutter-md justify-center q-mt-sm">
+                <div class="col-sm-3">
+                  <label for="">ชื่อเล่น:</label>
+
+                  <q-input
+                    v-model="student.nick_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="ชื่อเล่น"
+                    :rules="[(val) => !!val || 'กรุณากรอกชื่อเล่นนักเรียน']"
+                  />
+                </div>
+                <div class="col-sm-1">
+                  <q-input v-model="old.student" label="อายุ" disable></q-input>
+                </div>
+                <div class="col-sm-1 q-mr-md q-pt-lg">
+                  <p class="text-h6">ขวบ</p>
+                </div>
+                <div class="col-sm-5">
+                  <label for="">วัน/เดือน/ปี เกิด:</label>
+
+                  <q-input
+                    @blur="getYear()"
+                    v-model="student.birth_date"
+                    color="teal"
+                    type="date"
+                    :rules="[
+                      (val) => !!val || 'กรุณากรอกวันเดือนปีเกิดนักเรียน',
+                    ]"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="flex justify-end q-gutter-sm items-center q-mt-md q-mr-lg"
+              >
+                <div class="">
+                  <q-btn
+                    type="submit"
+                    class="text-secondary q-mr-sm"
+                    outline
+                    rounded
+                    label="บันทึก"
+                  ></q-btn>
+                  <q-btn
+                    class="text-warning"
+                    @click="clear(), (tab = 'mails'), alertWarning()"
+                    outline
+                    rounded
+                    label="ยกเลิก"
+                  ></q-btn>
+                </div>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-card>
+      </div>
+    </q-form>
+  </q-page>
+</template>
+
+<script setup>
+import { biArrowBarRight } from "@quasar/extras/bootstrap-icons";
+import { ref, watch } from "vue";
+import { alertShow } from "src/composable/alertShow";
+
+import { StudentApi } from "src/api/StudentApi";
+import { ParentApi } from "src/api/ParentApi";
+import { FileApi } from "src/api/FileApi";
+import { ManageApi } from "src/api/ManageParent";
+import { Loading, QSpinnerGears } from "quasar";
+const { alertSuccess, alertWarning } = alertShow();
+const { uploadImageApi } = FileApi();
+const { createStudent } = StudentApi();
+const lastParentId = ref([]);
+const lastStudentId = ref([]);
+const { addManage } = ManageApi();
+const { createParent } = ParentApi();
+const checkTab = ref(false);
+const checkParent = () => {
+  Object.values(parent.value).forEach((val) => {
+    if (!val) {
+      console.log("val");
+      checkTab.value = false;
+    } else {
+      console.log("ok");
+      checkTab.value = true;
+    }
+  });
+  if (checkTab.value) {
+    tab.value = "alarms";
+  } else {
+    alertWarning();
+  }
+};
+
+const imageFile = ref({
+  parent: "",
+  student: "",
+});
+const imageReset = ref({
+  parent: "",
+  student: "",
+});
+
+const old = ref({
+  student: {
+    type: String,
+    default: " ",
+  },
+  parent: {
+    type: String,
+    default: " ",
+  },
+});
+old.value.student = "";
+old.value.parent = "";
+
+const student = ref({
+  first_name: "",
+  last_name: "",
+  nick_name: "",
+  birth_date: "",
+  img_file: "",
+  gender: "",
+});
+const parent = ref({
+  first_name: "",
+  last_name: "",
+  nick_name: "",
+  birth_date: "",
+  phone: "",
+  zip_code: "",
+  email: "",
+  ocupation: "",
+  img_file: "",
+});
+const parentReset = ref({
+  first_name: "",
+  last_name: "",
+  nick_name: "",
+  birth_date: "",
+  phone: "",
+  zip_code: "",
+  email: "",
+  ocupation: "",
+  img_file: "",
+});
+const studentReset = ref({
+  first_name: "",
+  last_name: "",
+  nick_name: "",
+  birth_date: "",
+  img_file: "",
+  gender: "",
+});
+const clear = () => {
+  old.value.parent = "";
+  old.value.student = "";
+
+  Object.assign(student.value, studentReset.value);
+  Object.assign(parent.value, parentReset.value);
+  Object.assign(imageFile.value, imageReset.value);
+};
+const year = ref("");
+
+const tab = ref("mails");
+
+const getYear = () => {
+  const date = new Date();
+
+  if (parent.value.birth_date) {
+    const birtYear = parent.value.birth_date.substring(0, 4);
+    year.value = date.getFullYear() - Number(birtYear);
+
+    if (year.value > 0 && year.value < 100) {
+      old.value.parent = year.value;
+    } else {
+      old.value.parent = "";
+    }
+    // console.log(parent.value.birth_date);
+  }
+
+  if (student.value.birth_date) {
+    old.value.student = "";
+    const birtYear = student.value.birth_date.substring(0, 4);
+    year.value = date.getFullYear() - Number(birtYear);
+    if (year.value > 0 && year.value < 100) {
+      old.value.student = year.value;
+    } else {
+      old.value.student = "";
+    }
+  }
+};
+const addMore = async () => {
+  for (const [items, key] of Object.entries(parent.value)) {
+    console.log(typeof items);
+    if (items == "") {
+      console.log("empty");
+      invalid.value = false;
+    } else {
+      console.log("notempty");
+
+      invalid.value = true;
+    }
+  }
+  Loading.show({
+    spinner: QSpinnerGears,
+  });
+  if (imageFile.value.parent) {
+    const fileNameResponse = await uploadImageApi(imageFile.value.parent);
+    console.log("uploadImageApi", fileNameResponse);
+    if (fileNameResponse && fileNameResponse.imageName) {
+      parent.value.img_file = fileNameResponse.imageName;
+    }
+  }
+  if (imageFile.value.student) {
+    const fileNameResponse = await uploadImageApi(imageFile.value.student);
+    console.log("uploadImageApi", fileNameResponse);
+    if (fileNameResponse && fileNameResponse.imageName) {
+      student.value.img_file = fileNameResponse.imageName;
+    }
+  }
+  if (invalid.value === true) {
+    const responseParent = await createParent({
+      first_name: parent.value.first_name,
+      last_name: parent.value.last_name,
+      nick_name: parent.value.nick_name,
+      birth_date: parent.value.birth_date,
+      email: parent.value.email,
+      ocupation: parent.value.ocupation,
+      phone: parent.value.phone,
+      zip_code: parent.value.zip_code,
+      img_file: parent.value.img_file,
+    });
+    if (responseParent) {
+      responseParent.entity.forEach((element) => {
+        if (element) {
+          console.log(element);
+        }
+        // lastParentId.value = element.id;
+      });
+    }
+  } else {
+    alertWarning();
+  }
+
+  const response = await createStudent({
+    special: "",
+    first_name: student.value.first_name,
+    last_name: student.value.last_name,
+    nick_name: student.value.nick_name,
+    birth_date: student.value.birth_date,
+    img_file: student.value.img_file,
+    status: true,
+    gender: student.value.gender,
+  });
+  if (response) {
+    response.entity.forEach((element) => {
+      if (!element) {
+        console.log(element);
+      }
+      // lastStudentId.value = element.id;
+    });
+  }
+
+  if (lastParentId.value && lastStudentId.value) {
+    const addToManage = await addManage({
+      students_id: lastStudentId.value,
+      parent_id: lastParentId.value,
+    });
+  } else {
+    alertWarning();
+  }
+
+  Loading.hide();
+  Object.assign(old.value.student, (old.value.student = ""));
+  Object.assign(student.value, studentReset.value);
+  Object.assign(imageFile.value, imageReset.value);
+};
+
+const create = async () => {
+  Loading.show({
+    spinner: QSpinnerGears,
+  });
+  if (imageFile.value.parent) {
+    const fileNameResponse = await uploadImageApi(imageFile.value.parent);
+    console.log("uploadImageApi", fileNameResponse);
+    if (fileNameResponse && fileNameResponse.imageName) {
+      parent.value.img_file = fileNameResponse.imageName;
+    }
+  }
+  if (imageFile.value.student) {
+    const fileNameResponse = await uploadImageApi(imageFile.value.student);
+    console.log("uploadImageApi", fileNameResponse);
+    if (fileNameResponse && fileNameResponse.imageName) {
+      student.value.img_file = fileNameResponse.imageName;
+    }
+  }
+
+  if (lastParentId.value == "") {
+    const responseParent = await createParent({
+      first_name: parent.value.first_name,
+      last_name: parent.value.last_name,
+      nick_name: parent.value.nick_name,
+      birth_date: parent.value.birth_date,
+      email: parent.value.email,
+      ocupation: parent.value.ocupation,
+      phone: parent.value.phone,
+      zip_code: parent.value.zip_code,
+      img_file: parent.value.img_file,
+    });
+    responseParent.entity.forEach((items) => {
+      lastParentId.value = items.id;
+    });
+  }
+
+  const response = await createStudent({
+    special: "",
+    first_name: student.value.first_name,
+    last_name: student.value.last_name,
+    nick_name: student.value.nick_name,
+    birth_date: student.value.birth_date,
+    img_file: student.value.img_file,
+    status: true,
+
+    gender: student.value.gender,
+  });
+  console.log(response.entity);
+  response.entity.forEach((items) => {
+    console.log(items);
+    lastStudentId.value = items.id;
+  });
+
+  if (lastParentId.value != 0 && lastStudentId.value != 0) {
+    const addToManage = await addManage({
+      students_id: lastStudentId.value,
+      parent_id: lastParentId.value,
+    });
+    console.log(addToManage);
+  } else {
+    alertWarning();
+  }
+  Loading.hide();
+  await alertSuccess(
+    "สมัครข้อมูลนักเรียนสำเร็จ",
+    `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
+  );
+  clear();
+};
+</script>
+
+<style lang="scss" scoped></style>
