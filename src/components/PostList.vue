@@ -43,9 +43,10 @@ onMounted(() => {
   ListImage();
 });
 const deletePost = async () => {
-  const ftdelete = await deleteImgPost(detail.id);
+  // const ftdelete = await deleteImgPost(detail.id);
 
   if (ftdelete) {
+    // await ListImage();
     deleted("deleted", detail.index, detail.id);
   }
 };
