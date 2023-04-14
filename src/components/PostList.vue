@@ -13,12 +13,7 @@
     <td class="text-center">{{ detail.msg }}</td>
     <td class="text-center">
       <q-btn label="แก้ไข" color="warning" outline class="q-mr-sm"></q-btn>
-      <q-btn
-        outline
-        color="negative"
-        label="ลบ"
-        @click="$emit('delete', index, detail.id)"
-      ></q-btn>
+      <q-btn outline color="negative" label="ลบ" @click="deletePost"></q-btn>
     </td>
   </tr>
 </template>
@@ -26,8 +21,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { PostImageApi } from "src/api/PostImage";
-
-const { ListPostImg } = PostImageApi();
+const deleted = defineEmits(["deleted"]);
+const { ListPostImg, deleteImgPost } = PostImageApi();
 const postImage = ref([]);
 const detail = defineProps({
   index: Number,
@@ -47,6 +42,13 @@ const detail = defineProps({
 onMounted(() => {
   ListImage();
 });
+const deletePost = async () => {
+  const ftdelete = await deleteImgPost(detail.id);
+
+  if (ftdelete) {
+    deleted("deleted", detail.index, detail.id);
+  }
+};
 const ListImage = async () => {
   const response = await ListPostImg(detail.id);
   for (let image of response.entity) {

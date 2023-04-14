@@ -18,7 +18,7 @@
           :key="index"
           v-bind="items"
           :index="index"
-          @delete="confirm"
+          @deleted="confirm"
         />
       </tbody>
     </q-markup-table>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, onUpdated, ref } from "vue";
 import Modal from "src/components/Modal.vue";
 import PostList from "src/components/PostList.vue";
 import { PostImageApi } from "src/api/PostImage";
@@ -53,8 +53,8 @@ const confirm = (val, id) => {
     persistent: true,
   })
     .onOk(async () => {
-      await deletePosts(val, id);
       await alertSuccess("ลบโพสต์สำเร็จ", "คุณได้ทำการลบโพสสำเร็จแล้ว");
+      await deletePosts(val, id);
     })
 
     .onCancel(() => {
@@ -66,9 +66,13 @@ const deletePosts = async (val, id) => {
   await deleteImgPost(id);
   const deletePostId = await deletePost(id);
   PostData.value.splice(val, 1);
+  // location.reload();
 };
-onMounted(() => {
-  Post();
+onUpdated(async () => {
+  // await Post();
+});
+onMounted(async () => {
+  await Post();
 });
 const Post = async () => {
   Loading.show({
@@ -78,7 +82,6 @@ const Post = async () => {
   if (response && response.dataList) {
     for (let items of response.dataList) {
       PostData.value.push(items);
-      // console.log(PostData.value);
     }
   }
   Loading.hide();

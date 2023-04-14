@@ -136,6 +136,7 @@ const postData = async (e) => {
   pops.value = false;
 
   await alertSuccess("อัพโหลดสำเร็จ", "คุณได้โพสต์รายงานหรือกิจกรรมสำเร็จ");
+  location.reload();
 };
 const uploadMsg = async () => {
   return new Promise(async (resolve) => {
