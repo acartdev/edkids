@@ -118,7 +118,6 @@ const imageFile = (file = []) => {
   }
 };
 const postData = async (e) => {
-  e.preventDefault();
   Loading.show({
     spinner: QSpinnerGears,
   });
