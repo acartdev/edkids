@@ -34,7 +34,9 @@ import { PostImageApi } from "src/api/PostImage";
 import { alertShow } from "src/composable/alertShow";
 import { Loading, QSpinnerGears } from "quasar";
 import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
 const $q = useQuasar();
+const router = useRouter();
 const { alertSuccess, alertWarning } = alertShow();
 const { ListPost, deletePost, deleteImgPost, ListPostImg } = PostImageApi();
 const PostData = ref([]);
@@ -67,9 +69,8 @@ const confirm = (val, id) => {
 const deletePosts = async (val, id) => {
   console.log(val, id);
   await deleteImgPost(id);
-  const deletePostId = await deletePost(id);
+  await deletePost(id);
   PostData.value.splice(val, 1);
-  // location.reload();
 };
 onMounted(async () => {
   await Post();

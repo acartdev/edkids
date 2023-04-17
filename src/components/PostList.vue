@@ -41,7 +41,7 @@ const detail = defineProps({
   img: {},
 });
 onMounted(() => {
-  // ListImage();
+  ListImage();
 });
 const deletePost = async () => {
   deleted("deleted", detail.index, detail.id);

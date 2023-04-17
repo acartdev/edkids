@@ -27,7 +27,6 @@
 <script setup>
 const res = defineProps({
   image: {
-    type: String,
     default: "src/assets/logo_edkids.png",
   },
   birth_date: {
@@ -49,9 +48,7 @@ const res = defineProps({
   special: {
     type: String,
   },
-  status: {
-    type: Boolean,
-  },
+  status: {},
   gender: {
     type: Number,
   },

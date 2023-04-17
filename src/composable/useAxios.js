@@ -1,6 +1,6 @@
 import { api } from "boot/axios";
 import { LocalStorage } from "quasar";
-import { authenKey } from "src/utils/config";
+import { authenKey } from "src/boot/utils/config";
 export const useAxios = () => {
   // const appLocale = LocalStorage.getItem(appLocaleKey);
   const callApi = (
@@ -13,7 +13,7 @@ export const useAxios = () => {
     }
   ) => {
     return new Promise((resolve, reject) => {
-      console.log(`api ${api.defaults.baseURL}${req.url}`);
+      // console.log(`api ${api.defaults.baseURL}${req.url}`);
 
       api.defaults.headers["apiClient"] = "default";
       api.defaults.headers["X-Locale"] = "th";

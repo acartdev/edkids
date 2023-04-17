@@ -28,7 +28,7 @@ const fetchList = async () => {
   Loading.hide();
   if (response) {
     response.dataList.forEach((element) => {
-      console.log(element.status);
+      // console.log(element.status);
       if (element.status == false) {
         data.value.push(element);
         console.log(data.value);

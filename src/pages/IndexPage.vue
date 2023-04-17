@@ -106,7 +106,7 @@ const fetchList = async () => {
   const response = await listPoint();
   if (response) {
     data.value = response.data;
-    console.log(data.value);
+    // console.log(data.value);
     data.value.forEach((items) => {
       if (items.status != false || items.status != "") {
         check.value = true;

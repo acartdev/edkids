@@ -10,25 +10,27 @@
           round
           icon="menu"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
+          @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
         <q-toolbar-title class="text-right"> </q-toolbar-title>
 
         <div class="flex items-center justify-end">
           <div class="text-right text-subtitle1 no-padding">
-            <p class="no-margin" style="color: #1e293b">ครู ธนภัทร กองเงิน</p>
+            <p class="no-margin" style="color: #1e293b">
+              ครู {{ teacherData.first_name + " " + teacherData.last_name }}
+            </p>
             <p
               style="color: #1e293b"
               class="no-margin text-subtitle2 text-weight-light"
             >
-              เตรียมอนุบาล
+              เตรียมอนุบาล ห้อง {{ teacherData.room }}
             </p>
           </div>
 
           <div class="q-ml-sm">
             <q-avatar style="width: 60px; height: 60px">
-              <img src="https://cdn.quasar.dev/img/avatar.png" />
+              <img :src="teacherData.image?.thumbnail" />
             </q-avatar>
             <q-menu>
               <q-list>
@@ -96,14 +98,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useQuasar, Notify } from "quasar";
 import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
+import { teacherApi } from "src/api/Teacher";
+const { getTeacher } = teacherApi();
 const authenStore = useAuthenStore();
-const { userLogout } = AuthenApi();
+const { userLogout, getUserDataByAuth } = AuthenApi();
 const $q = useQuasar();
+const userId = ref();
+const teacherData = ref({});
 const leftDrawerOpen = ref(false);
 const logOut = () => {
   $q.dialog({
@@ -125,6 +131,26 @@ const logOut = () => {
     .onCancel(() => {
       // console.log('>>>> Cancel')
     });
+};
+onMounted(() => {
+  getUserProcess();
+});
+const getUser = async () => {
+  const response = await getTeacher(userId.value);
+  if (response) {
+    for (let items of response.entity) {
+      teacherData.value = items;
+    }
+  }
+};
+const getUserProcess = async () => {
+  const response = await getUserDataByAuth();
+  if (response && response.userData) {
+    authenStore.setAuthen(response.userData.teacher_id);
+
+    userId.value = authenStore.auth;
+  }
+  getUser();
 };
 const logoutProcess = async () => {
   const response = await userLogout();

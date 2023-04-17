@@ -140,7 +140,7 @@ const teacherLogin = async () => {
   if (response && response.userData) {
     teacherData.value = response.userData;
     authenStore.setAuthen(teacherData.value);
-    console.log(teacherData.value);
+    // console.log(teacherData.value);
     alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
     setTimeout(() => {
       window.location.replace("/");
@@ -157,7 +157,7 @@ const studentLogin = async () => {
     _u: email.value,
     _p: password.value,
   });
-  console.log(response);
+  // console.log(response);
 };
 </script>
 

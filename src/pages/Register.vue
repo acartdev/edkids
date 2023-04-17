@@ -32,7 +32,7 @@
 
           <q-tab-panels v-model="tab" animated>
             <q-tab-panel class="col-sm-7" name="mails">
-              <div class="row q-gutter-sm justify-around q-mt-sm">
+              <div class="row justify-around q-mt-sm">
                 <div class="col-sm-12 q-pl-lg flex">
                   <q-file
                     outlined
@@ -67,7 +67,7 @@
                     dense
                     color="teal"
                     label="นามสกุล"
-                    :rules="[(val) => !!val || 'กรุณากรอกนามสกุลห']"
+                    :rules="[(val) => !!val || 'กรุณากรอกนามสกุล']"
                   />
                 </div>
               </div>
@@ -152,7 +152,7 @@
               <div class="flex justify-end items-center q-mt-md q-mr-lg">
                 <div class="">
                   <q-btn
-                    @click="checkParent()"
+                    @click="tab = 'alarms'"
                     class="text-teal"
                     outline
                     rounded
@@ -291,12 +291,14 @@
 import { biArrowBarRight } from "@quasar/extras/bootstrap-icons";
 import { ref, watch } from "vue";
 import { alertShow } from "src/composable/alertShow";
-
+import { useAuthenStore } from "src/stores/authen";
 import { StudentApi } from "src/api/StudentApi";
 import { ParentApi } from "src/api/ParentApi";
 import { FileApi } from "src/api/FileApi";
 import { ManageApi } from "src/api/ManageParent";
+import { useRouter } from "vue-router";
 import { Loading, QSpinnerGears } from "quasar";
+const authenStore = useAuthenStore();
 const { alertSuccess, alertWarning } = alertShow();
 const { uploadImageApi } = FileApi();
 const { createStudent } = StudentApi();
@@ -304,23 +306,7 @@ const lastParentId = ref([]);
 const lastStudentId = ref([]);
 const { addManage } = ManageApi();
 const { createParent } = ParentApi();
-const checkTab = ref(false);
-const checkParent = () => {
-  Object.values(parent.value).forEach((val) => {
-    if (!val) {
-      console.log("val");
-      checkTab.value = false;
-    } else {
-      console.log("ok");
-      checkTab.value = true;
-    }
-  });
-  if (checkTab.value) {
-    tab.value = "alarms";
-  } else {
-    alertWarning();
-  }
-};
+const router = useRouter();
 
 const imageFile = ref({
   parent: "",
@@ -350,6 +336,7 @@ const student = ref({
   nick_name: "",
   birth_date: "",
   img_file: "",
+  teacher_id: authenStore.auth,
   gender: "",
 });
 const parent = ref({
@@ -464,7 +451,7 @@ const addMore = async () => {
     if (responseParent) {
       responseParent.entity.forEach((element) => {
         if (element) {
-          console.log(element);
+          // console.log(element);
         }
         // lastParentId.value = element.id;
       });
@@ -480,13 +467,14 @@ const addMore = async () => {
     nick_name: student.value.nick_name,
     birth_date: student.value.birth_date,
     img_file: student.value.img_file,
+
     status: true,
     gender: student.value.gender,
   });
   if (response) {
     response.entity.forEach((element) => {
       if (!element) {
-        console.log(element);
+        // console.log(element);
       }
       // lastStudentId.value = element.id;
     });
@@ -565,7 +553,7 @@ const create = async () => {
       students_id: lastStudentId.value,
       parent_id: lastParentId.value,
     });
-    console.log(addToManage);
+    // console.log(addToManage);
   } else {
     alertWarning();
   }
@@ -575,6 +563,7 @@ const create = async () => {
     `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
   );
   clear();
+  router.push("/list");
 };
 </script>
 

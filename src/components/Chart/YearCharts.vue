@@ -18,11 +18,9 @@ import { ref } from "vue";
 const res = ref([response.years]);
 const response = defineProps({
   years: {
-    type: Number,
     default: ref([0]),
   },
   amount: {
-    type: Number,
     default: ref([0]),
   },
 });

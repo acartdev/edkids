@@ -2,7 +2,6 @@
   <q-page class="row justify-center">
     <q-list v-if="check" class="col-sm-9 q-gutter-md">
       <q-item-label header class="text-h5">รายชื่อนักเรียน</q-item-label>
-      <q-spinner-audio v-if="loadding" size="300px" color="teal" />
 
       <ListStudents
         v-for="(items, index) in data"
@@ -15,42 +14,60 @@
       <!-- <q-item-section  class="text-h6 text-center">
         ไม่พบข้อมูลนักเรียน
       </q-item-section> -->
+      <q-pagination
+        v-model="currentPage"
+        :max="totalPage"
+        direction-links
+        flat
+        color="teal"
+        active-color="teal"
+        style="position: absolute; bottom: 7%; right: 20%"
+      />
     </q-list>
+
     <p v-else class="text-center text-h6 q-pt-lg">ไม่พบข้อมูลนักเรียน</p>
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { StudentApi } from "src/api/StudentApi";
 import ListStudents from "src/components/ListStudents.vue";
+import { Loading, QSpinnerGears } from "quasar";
 const { getStudentList } = StudentApi();
 const check = ref();
 const currentPage = ref(1);
 const data = ref([]);
 const recordPerPage = ref(5);
-const loadding = ref(false);
+const totalPage = ref(0);
+
 const getvar = (value) => {
   data.value.splice(value, 1);
 };
 
 const fetchList = async () => {
-  loadding.value = true;
+  Loading.show({
+    spinner: QSpinnerGears,
+  });
   const response = await getStudentList({
     page: currentPage.value,
     perPage: recordPerPage.value,
   });
+  Loading.hide();
   if (response) {
     data.value = response.dataList;
+    totalPage.value = response.appPagination;
     response.dataList.forEach((items) => {
       if (items.status != false || items.status != "") {
         check.value = true;
       }
     });
   }
-  loadding.value = false;
 };
 onMounted(() => {
+  fetchList();
+});
+watch(currentPage, async (newVal, oldVal) => {
   fetchList();
 });
 </script>

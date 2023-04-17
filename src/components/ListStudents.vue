@@ -219,10 +219,7 @@ const updateProcessed = async () => {
 
 const res = defineProps({
   index: Number,
-  image: {
-    type: String,
-    default: "src/assets/logo_edkids.png",
-  },
+  image: {},
   birth_date: {
     type: String,
     default: "",
@@ -243,16 +240,13 @@ const res = defineProps({
     type: String,
   },
   status: {
-    type: Boolean,
+    type: Number,
   },
   gender: {
     type: Number,
   },
   room: {
     type: String,
-  },
-  register_date: {
-    type: Number,
   },
 });
 const student = ref({
