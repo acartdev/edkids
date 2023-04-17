@@ -30,6 +30,33 @@
             <q-avatar style="width: 60px; height: 60px">
               <img src="https://cdn.quasar.dev/img/avatar.png" />
             </q-avatar>
+            <q-menu>
+              <q-list>
+                <q-item class="no-padding no-margin">
+                  <q-item-section class="q-px-xs q-py-sm"
+                    ><q-btn
+                      text
+                      dense=""
+                      flat=""
+                      label="แก้ไขข้อมูลส่วนตัว"
+                      class="text-caption no-margin text-center"
+                      icon-right="edit"
+                      text-color="warning"
+                    ></q-btn>
+                    <q-btn
+                      text
+                      dense=""
+                      flat=""
+                      label="ออกจากระบบ"
+                      @click="logOut()"
+                      class="text-caption no-margin text-center"
+                      icon-right="logout"
+                      text-color="negative"
+                    ></q-btn
+                  ></q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </div>
         </div>
       </q-toolbar>
@@ -50,10 +77,10 @@
       </q-item-label>
       <q-list class="q-px-lg">
         <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-          :to="link.link"
+          v-for="items in linksList"
+          :key="items.title"
+          v-bind="items"
+          :to="items.link"
         />
       </q-list>
     </q-drawer>
@@ -68,15 +95,62 @@
   </q-layout>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script setup>
+import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import { useQuasar, Notify } from "quasar";
+import { AuthenApi } from "src/api/AuthenApi";
+import { useAuthenStore } from "src/stores/authen";
+const authenStore = useAuthenStore();
+const { userLogout } = AuthenApi();
+const $q = useQuasar();
+const leftDrawerOpen = ref(false);
+const logOut = () => {
+  $q.dialog({
+    title: "ออกจากระบบ?",
+    message: "คุณต้องการออกจากระบบหรือไม่?",
+    cancel: true,
+    persistent: true,
+    ok: {
+      color: "red",
+    },
+    cancel: {
+      color: "warning",
+    },
+  })
+    .onOk(() => {
+      logoutProcess();
+    })
 
-const linksList = [
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    });
+};
+const logoutProcess = async () => {
+  const response = await userLogout();
+  console.log("userLogout", response);
+  if (response && response.status) {
+    //clear aut key on localStorage
+    authenStore.logout();
+    Notify.create({
+      message: "ออกจากระบบสำเร็จ",
+      color: "red",
+    });
+    // $q.notify({
+    //   message: "Jim pinged you.",
+    // });
+    //redirect to login page
+    setTimeout(() => {
+      authenStore.logout();
+      window.location.replace("/");
+    }, 500);
+  }
+};
+const linksList = ref([
   {
     title: "หน้าแรก",
     icon: "home",
-    link: "/admin/",
+    link: "/",
   },
   {
     title: "รายชื่อนักเรียน",
@@ -103,37 +177,7 @@ const linksList = [
     icon: "person_off",
     link: "/history",
   },
-  {
-    title: "ออกจากระบบ",
-    color: "text-red",
-    icon: "login",
-    link: "/logout",
-  },
-];
-function test() {
-  console.log("asdas");
-}
-
-export default defineComponent({
-  name: "MainLayout",
-
-  components: {
-    // eslint-disable-next-line vue/no-unused-components
-    EssentialLink,
-  },
-
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-});
+]);
 </script>
 <style scoped>
 * {

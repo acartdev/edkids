@@ -52,7 +52,6 @@
                     v-model="parent.first_name"
                     outlined
                     dense
-                    autofocus
                     color="teal"
                     label="ชื่อจริง"
                     :rules="[(val) => !!val || 'กรุณากรอกชื่อจริง']"

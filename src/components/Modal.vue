@@ -98,13 +98,14 @@ import { ref } from "vue";
 import { FileApi } from "src/api/FileApi";
 import { PostImageApi } from "src/api/PostImage";
 import { Loading, QSpinnerGears } from "quasar";
+import { useRouter } from "vue-router";
 import { alertShow } from "src/composable/alertShow";
 const { alertSuccess } = alertShow();
 const { PostImage, PostMsg } = PostImageApi();
 const { uploadImageApi } = FileApi();
 const msg = ref("");
 const props = defineProps(["prompt"]);
-
+const router = useRouter();
 const pops = ref(false);
 const imageData = ref([]);
 const imageList = ref([]);
@@ -136,6 +137,7 @@ const postData = async () => {
 
   await alertSuccess("อัพโหลดสำเร็จ", "คุณได้โพสต์รายงานหรือกิจกรรมสำเร็จ");
   location.reload();
+  // router.push("/post");
 };
 const uploadMsg = async () => {
   return new Promise(async (resolve) => {

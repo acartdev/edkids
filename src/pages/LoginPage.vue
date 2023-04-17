@@ -14,45 +14,82 @@
   </div>
 
   <div class="row justify-center items-start">
-    <div class="col-sm-12">
-      <q-tab-panels class="transparent no-padding fit" v-model="tab" animated>
-        <q-tab-panel name="mails">
-          <div class="row fit justify-center">
-            <div class="col-sm-11">
-              <q-input dark color="white" label="รหัสนักศึกษา"></q-input>
+    <q-form @submit="onSubmit">
+      <div class="col-sm-12">
+        <q-tab-panels class="transparent no-padding fit" v-model="tab" animated>
+          <q-tab-panel name="mails">
+            <div class="row fit justify-center">
+              <div class="col-sm-12">
+                <q-input
+                  dark
+                  v-model="stdCode"
+                  :rules="[codeInvalid]"
+                  dense
+                  color="white"
+                  label="รหัสนักศึกษา"
+                ></q-input>
+              </div>
+              <div class="col-sm-12">
+                <q-input
+                  label="วัน/เดือน/ปี เกิด"
+                  mask="##/##/####"
+                  fill-mask
+                  color="white"
+                  v-model="birth"
+                  dark
+                  dense
+                  :rules="[birthInvalid]"
+                  class="text-h6"
+                  hint="หากวันเกิดหรือเดือนเกิดเป็นเลขเดียวให้เติมเลข '0'"
+                />
+              </div>
             </div>
-            <div class="col-sm-11">
-              <q-input
-                label="วัน/เดือน/ปี เกิด"
-                mask="##/##/####"
-                fill-mask
-                color="white"
-                dark
-                class="text-h6"
-                hint="หากวันเกิดหรือเดือนเกิดเป็นเลขเดียวให้เติมเลข '0'"
-              />
+          </q-tab-panel>
+          <q-tab-panel name="alarms">
+            <div class="row fit justify-center">
+              <div class="col-sm-12">
+                <q-input
+                  v-model="email"
+                  dark
+                  dense
+                  label="ชื่อผู้ใช้"
+                  color="white"
+                  :rules="[emailInvalid]"
+                ></q-input>
+              </div>
+              <div class="col-sm-12">
+                <q-input
+                  v-model="password"
+                  :rules="[passwordInvalid]"
+                  dark
+                  dense
+                  :type="show ? 'password' : 'text'"
+                  label="รหัสผ่าน"
+                  color="white"
+                >
+                  <template v-slot:append>
+                    <q-btn
+                      icon="visibility"
+                      dense=""
+                      @click="show = !show"
+                      flat=""
+                    ></q-btn>
+                  </template>
+                </q-input>
+              </div>
             </div>
-          </div>
-        </q-tab-panel>
-        <q-tab-panel name="alarms">
-          <div class="row fit justify-center">
-            <div class="col-sm-11">
-              <q-input dark label="ชื่อผู้ใช้" color="white"></q-input>
-            </div>
-            <div class="col-sm-11">
-              <q-input dark label="รหัสผ่าน" color="white"></q-input>
-            </div>
-          </div>
-        </q-tab-panel>
-      </q-tab-panels>
-    </div>
-    <div class="col-sm-10 q-mt-md">
-      <q-btn
-        style="background-color: #60f4a0"
-        class="fit text-blue-grey-14 text-weight-bold"
-        label="เข้าสู่ระบบ"
-      ></q-btn>
-    </div>
+          </q-tab-panel>
+        </q-tab-panels>
+      </div>
+      <div class="col-sm-10 q-mt-md">
+        <q-btn
+          style="background-color: #60f4a0"
+          class="fit q-mx-auto text-blue-grey-14 text-weight-bold"
+          label="เข้าสู่ระบบ"
+          type="submit"
+        ></q-btn>
+      </div>
+    </q-form>
   </div>
   <div class="row justify-center q-mt-md">
     <div class="col-sm-10 text-center text-white">
@@ -70,7 +107,58 @@
 
 <script setup>
 import { ref } from "vue";
+import { AuthenApi } from "src/api/AuthenApi";
+import { alertShow } from "src/composable/alertShow";
+import { useAuthenStore } from "src/stores/authen";
+const authenStore = useAuthenStore();
+const { alertDanger, alertSuccess } = alertShow();
+const { loginProcess } = AuthenApi();
 const tab = ref("mails");
+const stdCode = ref("");
+const show = ref(true);
+const birth = ref("");
+const email = ref("");
+const teacherData = ref();
+const password = ref("");
+const emailInvalid = (val) => !!val || "กรุณากรอกอีเมลล์";
+const passwordInvalid = (val) => !!val || "กรุณาใส่รหัสผ่าน";
+const codeInvalid = (val) => !!val || "กรุณากรอกรหัสนักเรียน";
+const birthInvalid = (val) => !!val || "กรุณากรอกวันเดือนปีเกิด";
+const onSubmit = () => {
+  if (tab.value == "alarms") {
+    teacherLogin();
+  } else if (tab.value == "mails") {
+    studentLogin();
+  }
+};
+const teacherLogin = async () => {
+  const response = await loginProcess({
+    _u: email.value,
+    _p: password.value,
+  });
+  console.log(response.status);
+  if (response && response.userData) {
+    teacherData.value = response.userData;
+    authenStore.setAuthen(teacherData.value);
+    console.log(teacherData.value);
+    alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
+    setTimeout(() => {
+      window.location.replace("/");
+    }, 800);
+  } else if (response.status != true) {
+    alertDanger(
+      "เข้าสู่ระบบไม่สำเร็จ",
+      "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง"
+    );
+  }
+};
+const studentLogin = async () => {
+  const response = await loginProcess({
+    _u: email.value,
+    _p: password.value,
+  });
+  console.log(response);
+};
 </script>
 
 <style lang="scss" scoped></style>

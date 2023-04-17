@@ -81,10 +81,10 @@ const Post = async () => {
   const response = await ListPost();
   if (response && response.dataList) {
     PostData.value = response.dataList;
-    for (let i of PostData.value) {
-      const resImage = await ListPostImg(i.id);
-      imageData.value = resImage.entity;
-    }
+    // for (let i of PostData.value) {
+    //   const resImage = await ListPostImg(i.id);
+    //   imageData.value = resImage.entity;
+    // }
     // if (imageData.value) {
     //   for (let i of imageData.value) {
     //     // PostData.value.push({ img: {} });

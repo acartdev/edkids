@@ -15,5 +15,12 @@ export const alertShow = () => {
       icon: "success",
     });
   };
-  return { alertWarning, alertSuccess };
+  const alertDanger = async (title, text) => {
+    return await Swal.fire({
+      title: title,
+      text: text,
+      icon: "error",
+    });
+  };
+  return { alertWarning, alertSuccess, alertDanger };
 };
