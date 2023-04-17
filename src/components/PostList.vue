@@ -38,9 +38,10 @@ const detail = defineProps({
   create_by: {
     type: Number,
   },
+  img: {},
 });
 onMounted(() => {
-  ListImage();
+  // ListImage();
 });
 const deletePost = async () => {
   deleted("deleted", detail.index, detail.id);
@@ -49,7 +50,7 @@ const ListImage = async () => {
   const response = await ListPostImg(detail.id);
   for (let image of response.entity) {
     postImage.value.push(image.image.thumbnail);
-    console.log(postImage.value);
+    // console.log(postImage.value);
   }
 };
 </script>

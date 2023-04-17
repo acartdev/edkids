@@ -36,8 +36,9 @@ import { Loading, QSpinnerGears } from "quasar";
 import { useQuasar } from "quasar";
 const $q = useQuasar();
 const { alertSuccess, alertWarning } = alertShow();
-const { ListPost, deletePost, deleteImgPost } = PostImageApi();
+const { ListPost, deletePost, deleteImgPost, ListPostImg } = PostImageApi();
 const PostData = ref([]);
+const imageData = ref([]);
 const confirm = (val, id) => {
   $q.dialog({
     title: "ยืนยันการลบ?",
@@ -70,9 +71,6 @@ const deletePosts = async (val, id) => {
   PostData.value.splice(val, 1);
   // location.reload();
 };
-onUpdated(async () => {
-  // await Post();
-});
 onMounted(async () => {
   await Post();
 });
@@ -82,9 +80,17 @@ const Post = async () => {
   });
   const response = await ListPost();
   if (response && response.dataList) {
-    for (let items of response.dataList) {
-      PostData.value.push(items);
+    PostData.value = response.dataList;
+    for (let i of PostData.value) {
+      const resImage = await ListPostImg(i.id);
+      imageData.value = resImage.entity;
     }
+    // if (imageData.value) {
+    //   for (let i of imageData.value) {
+    //     // PostData.value.push({ img: {} });
+    //   }
+    // PostData.value = imageData.value;
+    // }
   }
   Loading.hide();
 };

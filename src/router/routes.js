@@ -1,7 +1,12 @@
 const routes = [
   {
-    path: "/",
+    path: "/login",
     component: () => import("layouts/LoginForm.vue"),
+    beforeEach(to, from, next) {
+      console.log("to", to);
+      console.log("form", from);
+      console.log("next", next);
+    },
     children: [
       {
         path: "",
@@ -10,10 +15,12 @@ const routes = [
     ],
   },
   {
-    path: "/admin",
+    path: "/",
+    meta: { requireAuth: true },
+
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "/", redirect: "/admin/" },
+      { path: "/" },
       { path: "/admin/", component: () => import("pages/IndexPage.vue") },
       { path: "/list", component: () => import("pages/ListStudent.vue") },
       {

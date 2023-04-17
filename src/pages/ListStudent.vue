@@ -24,7 +24,6 @@
 import { ref, onMounted } from "vue";
 import { StudentApi } from "src/api/StudentApi";
 import ListStudents from "src/components/ListStudents.vue";
-
 const { getStudentList } = StudentApi();
 const check = ref();
 const currentPage = ref(1);

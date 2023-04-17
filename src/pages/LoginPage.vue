@@ -23,7 +23,6 @@
             </div>
             <div class="col-sm-11">
               <q-input
-                v-model="id"
                 label="วัน/เดือน/ปี เกิด"
                 mask="##/##/####"
                 fill-mask
