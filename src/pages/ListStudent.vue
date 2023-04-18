@@ -30,11 +30,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onUnmounted, onUpdated } from "vue";
 import { StudentApi } from "src/api/StudentApi";
 import ListStudents from "src/components/ListStudents.vue";
+import { useAuthenStore } from "src/stores/authen";
+import { teacherApi } from "src/api/Teacher";
 import { Loading, QSpinnerGears } from "quasar";
+import { AuthenApi } from "src/api/AuthenApi";
+const { getTeacher } = teacherApi();
+const authenStore = useAuthenStore();
 const { getStudentList } = StudentApi();
+const { getUserDataByAuth } = AuthenApi();
 const check = ref();
 const currentPage = ref(1);
 const data = ref([]);
@@ -44,15 +50,21 @@ const totalPage = ref(0);
 const getvar = (value) => {
   data.value.splice(value, 1);
 };
-
+const fetchUserData = async () => {
+  if (authenStore.auth) {
+    console.log("id", authenStore.auth);
+  }
+};
 const fetchList = async () => {
   Loading.show({
     spinner: QSpinnerGears,
   });
   const response = await getStudentList({
+    id: authenStore.auth,
     page: currentPage.value,
     perPage: recordPerPage.value,
   });
+
   Loading.hide();
   if (response) {
     data.value = response.dataList;
@@ -66,7 +78,9 @@ const fetchList = async () => {
 };
 onMounted(() => {
   fetchList();
+  fetchUserData();
 });
+
 watch(currentPage, async (newVal, oldVal) => {
   fetchList();
 });

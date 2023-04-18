@@ -24,13 +24,17 @@
 import FormPoint from "src/components/FormPoint.vue";
 import { StudentApi } from "src/api/StudentApi";
 import { Loading, QSpinnerGears } from "quasar";
+import { useAuthenStore } from "src/stores/authen";
 import { ref, onMounted } from "vue";
+const authenStore = useAuthenStore();
 const { getStudentList } = StudentApi();
 const data = ref([]);
 const check = ref();
 
 const fetchList = async () => {
-  const response = await getStudentList();
+  const response = await getStudentList({
+    id: Number(authenStore.auth),
+  });
 
   if (response) {
     data.value = response.dataList;

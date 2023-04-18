@@ -166,7 +166,14 @@
       </q-card>
     </q-dialog>
     <!-- edit -->
-    <parent :show="pops" :id="res.id" @close="closePop()"></parent>
+    <parent
+      :special="res.special"
+      :show="pops"
+      v-for="(items, index) in parentList"
+      :key="index"
+      v-bind="items"
+      @close="closePop()"
+    ></parent>
   </q-item>
 </template>
 
@@ -177,7 +184,8 @@ import { useRoute } from "vue-router";
 import { StudentApi } from "src/api/StudentApi";
 import { ref, onMounted } from "vue";
 import { alertShow } from "src/composable/alertShow";
-
+import { ParentApi } from "src/api/ParentApi";
+const { getParentList, updateParent } = ParentApi();
 const router = useRoute();
 const { alertWarning, alertSuccess } = alertShow();
 const $q = useQuasar();
@@ -187,13 +195,22 @@ const special = ref(res.special);
 const first_name = ref(res.first_name);
 const last_name = ref(res.last_name);
 const nick_name = ref(res.nick_name);
+const birth_date = ref(res.birth_date);
 const emit = defineEmits(["index"]);
 const pops = ref(false);
-const birth_date = ref(res.birth_date);
+const parentList = ref([]);
 const closePop = () => {
   pops.value = false;
 };
 const year = ref();
+const listParent = async () => {
+  const response = await getParentList(res.id);
+  if (response) {
+    parentList.value = response.entity;
+    console.log(parentList.value);
+  }
+};
+
 const updateProcessed = async () => {
   if (!first_name.value) {
     first_name.value = res.first_name;
@@ -214,7 +231,11 @@ const updateProcessed = async () => {
     img_file: "",
   });
 
-  success();
+  await alertSuccess(
+    "อัพเดตข้อมูลสำเร็จ",
+    `คุณได้อัพเดตข้อมูลของนักเรียนรหัส ${res.special} แล้ว`
+  );
+  location.reload();
 };
 
 const res = defineProps({
@@ -262,6 +283,7 @@ const student = ref({
 });
 
 onMounted(() => {
+  listParent();
   const date = new Date();
   year.value = date.getFullYear() - res.birth_date.substring(0, 4);
 });

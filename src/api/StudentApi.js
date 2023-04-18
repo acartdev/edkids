@@ -3,13 +3,14 @@ export const StudentApi = () => {
   const { callApi } = useAxios();
   const getStudentList = async (
     req = {
+      id: 0,
       page: 1,
       perPage: 10,
     }
   ) => {
     return await callApi({
       method: "GET",
-      url: `/students?page=${req.page}&perPage=${req.perPage}`,
+      url: `/students?_id=${req.id}&page=${req.page}&perPage=${req.perPage}`,
     });
   };
   const deleteStudent = async (id) => {

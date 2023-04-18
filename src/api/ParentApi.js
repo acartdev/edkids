@@ -24,12 +24,13 @@ export const ParentApi = () => {
   const updateParent = async (req = {}) => {
     return await callApi({
       method: "PUT",
-      url: "/studentsUpdate",
+      url: "/parents",
       body: req,
     });
   };
   return {
     getParentList,
     createParent,
+    updateParent,
   };
 };

@@ -336,7 +336,7 @@ const student = ref({
   nick_name: "",
   birth_date: "",
   img_file: "",
-  teacher_id: authenStore.auth,
+  teacher_id: "",
   gender: "",
 });
 const parent = ref({
@@ -350,17 +350,7 @@ const parent = ref({
   ocupation: "",
   img_file: "",
 });
-const parentReset = ref({
-  first_name: "",
-  last_name: "",
-  nick_name: "",
-  birth_date: "",
-  phone: "",
-  zip_code: "",
-  email: "",
-  ocupation: "",
-  img_file: "",
-});
+
 const studentReset = ref({
   first_name: "",
   last_name: "",
@@ -539,10 +529,10 @@ const create = async () => {
     birth_date: student.value.birth_date,
     img_file: student.value.img_file,
     status: true,
-
+    teacher_id: authenStore.auth,
     gender: student.value.gender,
   });
-  console.log(response.entity);
+  console.log(response);
   response.entity.forEach((items) => {
     console.log(items);
     lastStudentId.value = items.id;
@@ -562,7 +552,7 @@ const create = async () => {
     "สมัครข้อมูลนักเรียนสำเร็จ",
     `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
   );
-  clear();
+
   router.push("/list");
 };
 </script>

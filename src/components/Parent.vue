@@ -10,12 +10,12 @@
         <div class="row fit justify-between q-gutter-sm">
           <div class="col-sm-5 flex flex-center">
             <q-img
+              :src="res.image.thumbnail"
               style="
                 object-fit: cover;
                 object-position: center;
                 max-height: 290px;
               "
-              :src="parent.image.thumbnail"
             ></q-img>
 
             <!-- <div class="">
@@ -25,7 +25,7 @@
             <div class="row items-center justify-between fit">
               <div class="col-sm-5">
                 <q-input
-                  v-model="parent.first_name"
+                  v-model="first_name"
                   dense
                   clearable
                   label="ชื่อจริง"
@@ -34,7 +34,7 @@
               </div>
               <div class="col-sm-6">
                 <q-input
-                  v-model="parent.last_name"
+                  v-model="last_name"
                   dense
                   clearable
                   label="นามสกุล"
@@ -43,16 +43,16 @@
               </div>
               <div class="col-sm-5">
                 <q-input
-                  v-model="parent.ocupation"
+                  v-model="nick_name"
                   clearable
-                  label="อาชีพ "
+                  label="ชื่อเล่น "
                   dense
                   color="teal"
                 />
               </div>
               <div class="col-sm-6">
                 <q-input
-                  v-model="parent.phone"
+                  v-model="phone"
                   clearable
                   label="เบอร์โทร"
                   dense
@@ -61,7 +61,7 @@
               </div>
               <div class="col-sm-7">
                 <q-input
-                  v-model="parent.email"
+                  v-model="email"
                   clearable
                   label="Email:"
                   dense
@@ -70,9 +70,9 @@
               </div>
               <div class="col-sm-4">
                 <q-input
-                  v-model="parent.zip_code"
+                  v-model="ocupation"
                   clearable
-                  label="รหัสไปรษณีย์"
+                  label="อาชีพ"
                   dense
                   color="teal"
                 />
@@ -84,7 +84,12 @@
 
       <q-card-actions align="right" class="text-primary">
         <q-btn color="negative" flat label="ยกเลิก" @click="$emit('close')" />
-        <q-btn color="warning" flat label="แก้ไขข้อมูล" />
+        <q-btn
+          color="warning"
+          flat
+          label="แก้ไขข้อมูล"
+          @click="updateProcess(), $emit('close')"
+        />
         <q-btn color="teal" flat label="ตกลง" @click="$emit('close')" />
       </q-card-actions>
     </q-card>
@@ -94,42 +99,84 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import { ParentApi } from "src/api/ParentApi";
-const { getParentList } = ParentApi();
+import { alertShow } from "src/composable/alertShow";
+const { alertSuccess } = alertShow();
+const { getParentList, updateParent } = ParentApi();
 const pop = ref(res);
 const data = ref([]);
-const parent = ref({
-  first_name: "",
-  last_name: "",
-  nick_name: "",
-  birth_date: "",
-  phone: "",
-  zip_code: "",
-  email: "",
-  ocupation: "",
-  img_file: "",
-  image: {},
-});
-const listParent = async () => {
-  const response = await getParentList(pop.value.id);
-  if (response) {
-    data.value = response.entity;
-    data.value.forEach((items) => {
-      parent.value = items;
-    });
-  }
-};
+
+const first_name = ref(res.first_name);
+const last_name = ref(res.last_name);
+const nick_name = ref(res.nick_name);
+const birth_date = ref(res.birth_date);
+const phone = ref(res.phone);
+const zip_code = ref(res.zip_code);
+const email = ref(res.email);
+const ocupation = ref(res.ocupation);
+const img_file = ref(res.img_file);
 
 const close = defineEmits("close");
 const res = defineProps({
+  id: { type: Number },
+  first_name: { type: String },
+  last_name: { type: String },
+  nick_name: { type: String },
+  birth_date: {},
+  phone: { type: String },
+  zip_code: { type: String },
+  email: { type: String },
+  ocupation: { type: String },
+  img_file: { type: String },
+  image: { thumbnail: {} },
   show: {
     default: false,
     type: Boolean,
   },
-  id: Number,
+  special: { type: String },
 });
 onMounted(() => {
-  listParent();
+  // console.log(data.value);
 });
+const updateProcess = async () => {
+  if (!first_name.value) {
+    first_name.value = res.first_name;
+  } else if (!last_name.value) {
+    last_name.value = res.last_name;
+  } else if (!nick_name.value) {
+    nick_name.value = res.nick_name;
+  } else if (!birth_date.value) {
+    birth_date.value = res.birth_date;
+  } else if (!email.value) {
+    email.value = res.birth_date;
+  } else if (!ocupation.value) {
+    ocupation.value = res.birth_date;
+  } else if (!zip_code.value) {
+    zip_code.value = res.birth_date;
+  } else if (!phone.value) {
+    phone.value = res.birth_date;
+  }
+  const response = await updateParent({
+    id: res.id,
+    first_name: first_name.value,
+    last_name: last_name.value,
+    nick_name: nick_name.value,
+    birth_date: birth_date.value,
+    phone: phone.value,
+    zip_code: zip_code.value,
+    email: email.value,
+    ocupation: ocupation.value,
+    img_file: img_file.value,
+  });
+  console.log(response);
+  if (response) {
+    await alertSuccess(
+      "อัพเดตข้อมูลสำเร็จ",
+      `คุณได้อัพเดตข้อมูลผู้ปกครองของนักเรียนรหัส ${res.special} แล้ว`
+    );
+    close("close");
+    location.reload();
+  }
+};
 </script>
 
 <style lang="scss" scoped></style>

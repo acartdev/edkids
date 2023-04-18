@@ -16,6 +16,8 @@ import { ref, onMounted } from "vue";
 import { StudentApi } from "src/api/StudentApi";
 import { Loading, QSpinnerGears } from "quasar";
 import StudentKeep from "src/components/StudentKeep.vue";
+import { useAuthenStore } from "src/stores/authen";
+const authenStore = useAuthenStore();
 const { getStudentList } = StudentApi();
 
 const check = ref(true);
@@ -24,7 +26,9 @@ const fetchList = async () => {
   Loading.show({
     spinner: QSpinnerGears,
   });
-  const response = await getStudentList();
+  const response = await getStudentList({
+    id: Number(authenStore.auth),
+  });
   Loading.hide();
   if (response) {
     response.dataList.forEach((element) => {
