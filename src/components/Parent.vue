@@ -8,13 +8,23 @@
 
       <q-card-section class="q-pt-none" style="height: 290px; width: 100%">
         <div class="row fit justify-between q-gutter-sm">
-          <div class="col-sm-5 flex flex-center">
+          <div class="col-sm-5 flex flex-center relative-position">
+            <q-file
+              @update:model-value="imageFile"
+              dense=""
+              borderless=""
+              class="absolute-top-right q-mr-xl q-mt-md"
+              style="z-index: 10"
+              ><slot
+                ><q-icon size="25px" color="teal" name="edit"></q-icon></slot
+            ></q-file>
             <q-img
-              :src="res.image.thumbnail"
+              :src="imgUrl ? imgUrl : res.image.thumbnail"
               style="
                 object-fit: cover;
                 object-position: center;
-                max-height: 290px;
+                max-height: 260px;
+                max-width: 180px;
               "
             ></q-img>
 
@@ -100,10 +110,14 @@
 import { onMounted, ref, watch } from "vue";
 import { ParentApi } from "src/api/ParentApi";
 import { alertShow } from "src/composable/alertShow";
+import { FileApi } from "src/api/FileApi";
+const { uploadImageApi } = FileApi();
 const { alertSuccess } = alertShow();
+
 const { getParentList, updateParent } = ParentApi();
 const pop = ref(res);
 const data = ref([]);
+const haveImage = ref(false);
 
 const first_name = ref(res.first_name);
 const last_name = ref(res.last_name);
@@ -114,8 +128,15 @@ const zip_code = ref(res.zip_code);
 const email = ref(res.email);
 const ocupation = ref(res.ocupation);
 const img_file = ref(res.img_file);
-
+const editImage = ref();
+const imgUrl = ref();
 const close = defineEmits("close");
+const imageSend = ref();
+
+const imageFile = (val) => {
+  imgUrl.value = URL.createObjectURL(val);
+  imageSend.value = val;
+};
 const res = defineProps({
   id: { type: Number },
   first_name: { type: String },
@@ -135,7 +156,7 @@ const res = defineProps({
   special: { type: String },
 });
 onMounted(() => {
-  // console.log(data.value);
+  // console.log(res);
 });
 const updateProcess = async () => {
   if (!first_name.value) {
@@ -155,7 +176,19 @@ const updateProcess = async () => {
   } else if (!phone.value) {
     phone.value = res.birth_date;
   }
+
+  if (imageSend.value) {
+    const fileNameResponse = await uploadImageApi(imageSend.value);
+    console.log("uploadImageApi", fileNameResponse);
+    if (fileNameResponse && fileNameResponse.imageName) {
+      editImage.value = fileNameResponse.imageName;
+    }
+  }
+  if (res.img_file != "" || res.img_file || res.img_file == null) {
+    haveImage.value = true;
+  }
   const response = await updateParent({
+    haveImage: haveImage.value,
     id: res.id,
     first_name: first_name.value,
     last_name: last_name.value,
@@ -165,7 +198,7 @@ const updateProcess = async () => {
     zip_code: zip_code.value,
     email: email.value,
     ocupation: ocupation.value,
-    img_file: img_file.value,
+    img_file: editImage.value,
   });
   console.log(response);
   if (response) {

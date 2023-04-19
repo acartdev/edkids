@@ -30,7 +30,7 @@
     <q-item-section center class="text-center">
       <q-item-label>
         <span class="text-weight-medium text-center">{{
-          student.status ? "นัเรียนเกณฑ์ปกติ" : "นักเรียนเกณฑ์ปกติ"
+          student.status ? "นักเรียนเกณฑ์ปกติ" : "นักเรียนเกณฑ์ปกติ"
         }}</span>
       </q-item-label>
     </q-item-section>
@@ -82,12 +82,22 @@
 
         <q-card-section class="q-pt-none">
           <div class="row justify-center">
-            <div class="col-sm-6 flex flex-center">
+            <div class="col-sm-6 flex flex-center relative-position">
+              <q-file
+                @update:model-value="imageFile"
+                dense=""
+                borderless=""
+                class="absolute-top-right q-mr-xl"
+                style="z-index: 10"
+                ><slot
+                  ><q-icon size="25px" color="teal" name="edit"></q-icon></slot
+              ></q-file>
               <q-img
                 height="200px"
                 width="150px"
-                :src="res.image.thumbnail"
-              ></q-img>
+                :src="imgUrl ? imgUrl : res.image.thumbnail"
+              >
+              </q-img>
             </div>
             <div class="col-sm-6">
               <div class="row q-gutter-sm justify-around items-center">
@@ -153,19 +163,14 @@
             color="warning"
             flat
             label="แก้ไขข้อมูล"
-            @click="
-              updateProcessed(),
-                alertSuccess(
-                  'แก้ไขข้อมูลสำเร็จ',
-                  `แก้ไขข้อมูลของ ${res.nick_name} สำเร็จ`
-                )
-            "
+            @click="updateProcessed()"
             v-close-popup
           />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <!-- edit -->
+
     <parent
       :special="res.special"
       :show="pops"
@@ -180,13 +185,13 @@
 <script setup>
 import { useQuasar } from "quasar";
 import Parent from "./Parent.vue";
-import { useRoute } from "vue-router";
 import { StudentApi } from "src/api/StudentApi";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { alertShow } from "src/composable/alertShow";
 import { ParentApi } from "src/api/ParentApi";
+import { FileApi } from "src/api/FileApi";
+const { uploadImageApi } = FileApi();
 const { getParentList, updateParent } = ParentApi();
-const router = useRoute();
 const { alertWarning, alertSuccess } = alertShow();
 const $q = useQuasar();
 const { deleteStudent, updateStudent } = StudentApi();
@@ -198,7 +203,15 @@ const nick_name = ref(res.nick_name);
 const birth_date = ref(res.birth_date);
 const emit = defineEmits(["index"]);
 const pops = ref(false);
+const haveImage = ref(false);
+const imgUrl = ref();
 const parentList = ref([]);
+const editImage = ref("");
+const imageSend = ref();
+const imageFile = (val) => {
+  imgUrl.value = URL.createObjectURL(val);
+  imageSend.value = val;
+};
 const closePop = () => {
   pops.value = false;
 };
@@ -207,7 +220,6 @@ const listParent = async () => {
   const response = await getParentList(res.id);
   if (response) {
     parentList.value = response.entity;
-    console.log(parentList.value);
   }
 };
 
@@ -221,16 +233,31 @@ const updateProcessed = async () => {
   } else if (!birth_date.value) {
     birth_date.value = res.birth_date;
   }
+  if (imageSend.value) {
+    const fileNameResponse = await uploadImageApi(imageSend.value);
+    console.log("uploadImageApi", fileNameResponse);
+    if (fileNameResponse && fileNameResponse.imageName) {
+      editImage.value = fileNameResponse.imageName;
+    }
+  }
+  if (
+    student.value.img_file != "" ||
+    student.value.img_file ||
+    student.value.img_file == null
+  ) {
+    haveImage.value = true;
+  }
+
   const response = await updateStudent({
+    haveImage: haveImage.value,
     id: res.id,
     first_name: first_name.value,
     last_name: last_name.value,
     nick_name: nick_name.value,
     birth_date: birth_date.value,
-
-    img_file: "",
+    img_file: editImage.value,
   });
-
+  // console.log(response);
   await alertSuccess(
     "อัพเดตข้อมูลสำเร็จ",
     `คุณได้อัพเดตข้อมูลของนักเรียนรหัส ${res.special} แล้ว`
@@ -240,6 +267,7 @@ const updateProcessed = async () => {
 
 const res = defineProps({
   index: Number,
+  search: String,
   image: {},
   birth_date: {
     type: String,
@@ -269,6 +297,7 @@ const res = defineProps({
   room: {
     type: String,
   },
+  img_file: String,
 });
 const student = ref({
   special: "",
@@ -284,6 +313,8 @@ const student = ref({
 
 onMounted(() => {
   listParent();
+  student.value = res;
+
   const date = new Date();
   year.value = date.getFullYear() - res.birth_date.substring(0, 4);
 });
@@ -315,11 +346,6 @@ const confirm = () => {
       alertWarning();
     });
 };
-onMounted(() => {
-  if (res) {
-    student.value = res;
-  }
-});
 </script>
 
 <style lang="scss" scoped></style>

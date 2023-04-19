@@ -22,6 +22,13 @@ export const PostImageApi = () => {
       url: "/postList",
     });
   };
+  const updatePost = async (req = {}) => {
+    return await callApi({
+      method: "PUT",
+      url: "/social",
+      body: req,
+    });
+  };
   const ListPostImg = async (id) => {
     return await callApi({
       method: "GET",
@@ -48,5 +55,6 @@ export const PostImageApi = () => {
     ListPostImg,
     deleteImgPost,
     deletePost,
+    updatePost,
   };
 };

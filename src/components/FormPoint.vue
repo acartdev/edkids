@@ -41,9 +41,11 @@ import { ref, onMounted } from "vue";
 import { Loading, QSpinnerGears } from "quasar";
 import { alertShow } from "src/composable/alertShow";
 import { sendPointApi } from "src/api/sendPointApi";
-const { alertSuccess } = alertShow();
+const { alertSuccess, alertDanger } = alertShow();
 const point = ref("");
 const note = ref("");
+const hide = defineEmits(["hide"]);
+
 const options = [
   {
     label: "ดี",
@@ -60,6 +62,7 @@ const options = [
 ];
 const { sendPoint } = sendPointApi();
 const res = defineProps({
+  index: Number,
   image: {
     type: String,
     default: "src/assets/logo_edkids.png",
@@ -96,23 +99,29 @@ const res = defineProps({
     type: Number,
   },
 });
+
 const clear = () => {
   point.value = "";
   note.value = "";
 };
 const givePoint = async () => {
-  Loading.show({
-    spinner: QSpinnerGears,
-  });
-  const response = await sendPoint({
-    level: point.value.values,
-    note: note.value,
-    student_id: res.id,
-  });
-  console.log(response);
-  Loading.hide();
-  alertSuccess("ให้คะแนนสำเร็จ", `ให้คะแนนน้อง ${res.nick_name} สำเร็จ`);
-  clear();
+  if (point.value.values) {
+    Loading.show({
+      spinner: QSpinnerGears,
+    });
+    const response = await sendPoint({
+      level: point.value.values,
+      note: note.value,
+      student_id: res.id,
+    });
+
+    Loading.hide();
+    alertSuccess("ให้คะแนนสำเร็จ", `ให้คะแนนน้อง ${res.nick_name} สำเร็จ`);
+    clear();
+    hide("hide", res.index);
+  } else {
+    alertDanger("ให้คะแนนไม่สำเร็จ", "กรุณาทำการตรวจสอกแบบฟอร์ม");
+  }
 };
 </script>
 

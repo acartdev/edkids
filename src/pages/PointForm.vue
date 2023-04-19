@@ -13,7 +13,13 @@
         </tr>
       </thead>
       <tbody>
-        <FormPoint v-for="items in data" :key="items" v-bind="items" />
+        <FormPoint
+          v-for="(items, index) in data"
+          :key="index"
+          v-bind="items"
+          :index="index"
+          @hide="hide"
+        />
       </tbody>
     </q-markup-table>
   </q-page>
@@ -23,17 +29,22 @@
 <script setup>
 import FormPoint from "src/components/FormPoint.vue";
 import { StudentApi } from "src/api/StudentApi";
+import { teacherKey } from "src/boot/utils/config";
 import { Loading, QSpinnerGears } from "quasar";
+import { LocalStorage } from "quasar";
 import { useAuthenStore } from "src/stores/authen";
 import { ref, onMounted } from "vue";
 const authenStore = useAuthenStore();
 const { getStudentList } = StudentApi();
 const data = ref([]);
 const check = ref();
-
+const id = LocalStorage.getItem(teacherKey);
+const hide = (val) => {
+  data.value.splice(val, 1);
+};
 const fetchList = async () => {
   const response = await getStudentList({
-    id: Number(authenStore.auth),
+    id: id,
   });
 
   if (response) {

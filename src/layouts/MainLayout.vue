@@ -24,7 +24,7 @@
               style="color: #1e293b"
               class="no-margin text-subtitle2 text-weight-light"
             >
-              เตรียมอนุบาล ห้อง {{ teacherData.room }}
+              {{ teacherData.position }} ห้อง {{ teacherData.room }}
             </p>
           </div>
 
@@ -100,15 +100,18 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
-import { useQuasar, Notify } from "quasar";
+import { useQuasar, Notify, LocalStorage } from "quasar";
+import { teacherKey } from "src/boot/utils/config";
 import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
 import { teacherApi } from "src/api/Teacher";
+import { alertShow } from "src/composable/alertShow";
+const { alertWarning } = alertShow();
 const { getTeacher } = teacherApi();
 const authenStore = useAuthenStore();
 const { userLogout, getUserDataByAuth } = AuthenApi();
 const $q = useQuasar();
-const userId = ref();
+const userId = LocalStorage.getItem(teacherKey);
 const teacherData = ref({});
 const leftDrawerOpen = ref(false);
 const logOut = () => {
@@ -129,14 +132,14 @@ const logOut = () => {
     })
 
     .onCancel(() => {
-      // console.log('>>>> Cancel')
+      alertWarning();
     });
 };
 onMounted(() => {
   getUserProcess();
 });
 const getUser = async () => {
-  const response = await getTeacher(userId.value);
+  const response = await getTeacher(authenStore.auth);
   if (response) {
     for (let items of response.entity) {
       teacherData.value = items;
@@ -146,26 +149,20 @@ const getUser = async () => {
 const getUserProcess = async () => {
   const response = await getUserDataByAuth();
   if (response && response.userData) {
-    authenStore.setAuthen(response.userData.teacher_id);
-
-    userId.value = authenStore.auth;
+    authenStore.setAuthen(response.userData);
   }
   getUser();
 };
 const logoutProcess = async () => {
   const response = await userLogout();
-  console.log("userLogout", response);
+
   if (response && response.status) {
-    //clear aut key on localStorage
     authenStore.logout();
     Notify.create({
       message: "ออกจากระบบสำเร็จ",
       color: "red",
     });
-    // $q.notify({
-    //   message: "Jim pinged you.",
-    // });
-    //redirect to login page
+
     setTimeout(() => {
       authenStore.logout();
       window.location.replace("/");

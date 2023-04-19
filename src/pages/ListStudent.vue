@@ -1,20 +1,45 @@
 <template>
   <q-page class="row justify-center">
     <q-list v-if="check" class="col-sm-9 q-gutter-md">
-      <q-item-label header class="text-h5">รายชื่อนักเรียน</q-item-label>
+      <template class="flex justify-between">
+        <q-item-label header class="text-h5">รายชื่อนักเรียน</q-item-label>
+        <q-input
+          v-model="search"
+          @focus="listAll()"
+          @blur="
+            search.length > 0
+              ? ((currentPage = 0), (recordPerPage = 0))
+              : ((currentPage = 1), (recordPerPage = 4))
+          "
+          placeholder="กรอกรหัสนักเรียน หรือ ชื่อ"
+          color="teal"
+          label="ค้นหา"
+          ><template v-slot:append
+            ><q-btn
+              @click="(search = ''), (currentPage = 1), (recordPerPage = 4)"
+              :icon="search.length > 0 ? 'close' : 'search'"
+              flat=""
+              dense=""
+            >
+            </q-btn></template
+        ></q-input>
+      </template>
 
       <ListStudents
-        v-for="(items, index) in data"
+        v-for="(items, index) in searchList"
         :key="index"
         v-bind="items"
         :index="index"
         @index="getvar(index)"
+        :search="search"
       />
 
       <!-- <q-item-section  class="text-h6 text-center">
         ไม่พบข้อมูลนักเรียน
       </q-item-section> -->
+
       <q-pagination
+        v-if="currentPage != 0"
         v-model="currentPage"
         :max="totalPage"
         direction-links
@@ -34,33 +59,40 @@ import { ref, onMounted, watch, onUnmounted, onUpdated } from "vue";
 import { StudentApi } from "src/api/StudentApi";
 import ListStudents from "src/components/ListStudents.vue";
 import { useAuthenStore } from "src/stores/authen";
+import { LocalStorage } from "quasar";
 import { teacherApi } from "src/api/Teacher";
 import { Loading, QSpinnerGears } from "quasar";
 import { AuthenApi } from "src/api/AuthenApi";
-const { getTeacher } = teacherApi();
-const authenStore = useAuthenStore();
+import { computed } from "vue";
+import { teacherKey } from "src/boot/utils/config";
+
 const { getStudentList } = StudentApi();
-const { getUserDataByAuth } = AuthenApi();
+
 const check = ref();
+const search = ref("");
+const forSearch = ref([]);
+
 const currentPage = ref(1);
 const data = ref([]);
-const recordPerPage = ref(5);
+
+const id = LocalStorage.getItem(teacherKey);
+const recordPerPage = ref(4);
 const totalPage = ref(0);
+const listAll = () => {
+  currentPage.value = 0;
+  recordPerPage.value = 0;
+};
 
 const getvar = (value) => {
   data.value.splice(value, 1);
 };
-const fetchUserData = async () => {
-  if (authenStore.auth) {
-    console.log("id", authenStore.auth);
-  }
-};
+
 const fetchList = async () => {
   Loading.show({
     spinner: QSpinnerGears,
   });
   const response = await getStudentList({
-    id: authenStore.auth,
+    id: id,
     page: currentPage.value,
     perPage: recordPerPage.value,
   });
@@ -70,6 +102,8 @@ const fetchList = async () => {
     data.value = response.dataList;
     totalPage.value = response.appPagination;
     response.dataList.forEach((items) => {
+      forSearch.value.push(items);
+
       if (items.status != false || items.status != "") {
         check.value = true;
       }
@@ -78,7 +112,16 @@ const fetchList = async () => {
 };
 onMounted(() => {
   fetchList();
-  fetchUserData();
+});
+const searchList = computed(() => {
+  return data.value.filter((user) => {
+    return (
+      user.special.match(search.value) ||
+      user.first_name.match(search.value) ||
+      user.last_name.match(search.value) ||
+      user.nick_name.match(search.value)
+    );
+  });
 });
 
 watch(currentPage, async (newVal, oldVal) => {

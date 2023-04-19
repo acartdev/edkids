@@ -12,17 +12,27 @@
     </td>
     <td class="text-center">{{ detail.msg }}</td>
     <td class="text-center">
-      <q-btn label="แก้ไข" color="warning" outline class="q-mr-sm"></q-btn>
+      <q-btn
+        label="แก้ไข"
+        color="warning"
+        @click="shows = !shows"
+        outline
+        class="q-mr-sm"
+      ></q-btn>
       <q-btn outline color="negative" label="ลบ" @click="deletePost"></q-btn>
     </td>
+    <post-edit :data="detail" :show="shows" @close="shows = !shows"></post-edit>
   </tr>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { PostImageApi } from "src/api/PostImage";
+import PostEdit from "./PostEdit.vue";
 const deleted = defineEmits(["deleted"]);
 const { ListPostImg, deleteImgPost } = PostImageApi();
+const shows = ref(false);
+const postData = ref({});
 const postImage = ref([]);
 const detail = defineProps({
   index: Number,
@@ -42,6 +52,7 @@ const detail = defineProps({
 });
 onMounted(() => {
   ListImage();
+  postData.value = detail;
 });
 const deletePost = async () => {
   deleted("deleted", detail.index, detail.id);
@@ -50,7 +61,6 @@ const ListImage = async () => {
   const response = await ListPostImg(detail.id);
   for (let image of response.entity) {
     postImage.value.push(image.image.thumbnail);
-    // console.log(postImage.value);
   }
 };
 </script>
