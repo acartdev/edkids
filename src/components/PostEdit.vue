@@ -16,58 +16,32 @@
           ><slot><q-icon name="add" color="teal" size="30px"></q-icon></slot
         ></q-file>
       </q-card-section>
-      <q-card-section class="" style="height: 420px">
-        <div class="row" v-if="image.length == 1">
-          <q-responsive :ratio="15 / 12" class="col">
-            <q-img :src="image[0].image.thumbnail"></q-img>
-          </q-responsive>
-        </div>
-        <div class="row" v-if="image.length == 2">
-          <q-responsive :ratio="8 / 12" class="col">
-            <q-img :src="image[0].image.thumbnail"></q-img>
-          </q-responsive>
-          <q-responsive :ratio="8 / 12" class="col">
-            <q-img :src="image[1].image.thumbnail"></q-img>
-          </q-responsive>
-        </div>
-        <div class="row" v-if="image.length == 3">
-          <q-responsive :ratio="14 / 12" class="col">
-            <q-img class="col" :src="image[0].image.thumbnail" />
-          </q-responsive>
-          <div class="col-sm-5">
-            <div class="row">
-              <q-responsive :ratio="14 / 12" class="col">
-                <q-img class="col" :src="image[1].image.thumbnail" />
-              </q-responsive>
-            </div>
-            <q-responsive :ratio="14 / 12" class="col">
-              <q-img class="col" :src="image[2].image.thumbnail" />
-            </q-responsive>
-          </div>
-        </div>
 
-        <div class="row" v-if="image.length == 4">
-          <div class="col-sm-6">
-            <q-responsive :ratio="14 / 11" class="col">
-              <q-img :src="image[0].image.thumbnail"></q-img>
-            </q-responsive>
-            <q-responsive :ratio="14 / 11" class="col">
-              <q-img :src="image[1].image.thumbnail"></q-img>
-            </q-responsive>
-          </div>
-          <div class="col-sm-6">
-            <q-responsive :ratio="14 / 11" class="col">
-              <q-img :src="image[2].image.thumbnail"></q-img>
-            </q-responsive>
-            <q-responsive :ratio="14 / 11" class="col">
-              <q-img :src="image[3].image.thumbnail"></q-img>
-            </q-responsive>
-          </div>
+      <q-card-section>
+        <div class="row" style="height: 400px; max-height: 400px">
+          <q-responsive :ratio="14 / 14" class="col">
+            <q-scroll-area style="height: 190px; max-width: 300px">
+              <template v-for="(img, index) in image" :key="index">
+                <q-btn
+                  icon="close "
+                  flat=""
+                  dense=""
+                  @click="deleteImgProcess(index, img.id)"
+                ></q-btn>
+                <q-img class="relative-position" :src="img.image.thumbnail">
+                </q-img>
+              </template>
+            </q-scroll-area>
+          </q-responsive>
         </div>
       </q-card-section>
 
       <q-card-section>
-        <q-btn label="ยกเลิก" @click="$emit('close')"></q-btn>
+        <q-btn
+          class="cursor-pointer"
+          label="ยกเลิก"
+          @click="$emit('close')"
+        ></q-btn>
         <q-btn label="แก้ไข" @click="updateProcess()"></q-btn>
       </q-card-section>
     </q-card>
@@ -80,7 +54,7 @@ import { alertShow } from "src/composable/alertShow";
 import { LocalStorage, Loading, QSpinnerGears } from "quasar";
 import { teacherKey } from "src/boot/utils/config";
 import { PostImageApi } from "src/api/PostImage";
-const { ListPostImg, updatePost } = PostImageApi();
+const { ListPostImg, updatePost, deleteImg } = PostImageApi();
 const { alertSuccess } = alertShow();
 const shows = ref(res);
 const postData = ref({});
@@ -96,7 +70,7 @@ const ListImage = async () => {
   const response = await ListPostImg(res.data.id);
   if (response && response.entity) {
     image.value = response.entity;
-    console.log(image.value);
+    console.log("all", image.value);
   }
 };
 const updateProcess = async () => {
@@ -117,6 +91,13 @@ const updateProcess = async () => {
     );
   }
 };
+const deleteImgProcess = async (index, id) => {
+  const response = await deleteImg(id);
+  if (response) {
+    image.value.splice(index, 1);
+    console.log(index, id, response);
+  }
+};
 onMounted(() => {
   ListImage();
   postData.value = res.data;
@@ -124,8 +105,4 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped>
-.row {
-  max-height: 500px;
-}
-</style>
+<style lang="scss" scoped></style>

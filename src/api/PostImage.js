@@ -35,6 +35,13 @@ export const PostImageApi = () => {
       url: `/postImgReadSingle?_id=${id}`,
     });
   };
+  const deleteImg = async (id) => {
+    return await callApi({
+      method: "DELETE",
+      url: `/postImg?_ids=${id}`,
+    });
+  };
+
   const deletePost = async (id) => {
     return await callApi({
       method: "DELETE",
@@ -56,5 +63,6 @@ export const PostImageApi = () => {
     deleteImgPost,
     deletePost,
     updatePost,
+    deleteImg,
   };
 };

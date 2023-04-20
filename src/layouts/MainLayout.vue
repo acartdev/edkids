@@ -63,7 +63,6 @@
         </div>
       </q-toolbar>
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -98,7 +97,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { Dark } from "quasar";
+import { onMounted, ref, watch } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useQuasar, Notify, LocalStorage } from "quasar";
 import { teacherKey } from "src/boot/utils/config";
@@ -111,9 +111,11 @@ const { getTeacher } = teacherApi();
 const authenStore = useAuthenStore();
 const { userLogout, getUserDataByAuth } = AuthenApi();
 const $q = useQuasar();
+const darkMode = ref(false);
 const userId = LocalStorage.getItem(teacherKey);
 const teacherData = ref({});
 const leftDrawerOpen = ref(false);
+
 const logOut = () => {
   $q.dialog({
     title: "ออกจากระบบ?",

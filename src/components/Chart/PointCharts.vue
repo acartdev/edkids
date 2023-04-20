@@ -10,15 +10,22 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-const data = defineProps({
-  good: {
-    type: Number,
-  },
-  nomal: {
-    type: Number,
-  },
+import { PointApi } from "src/api/PointTotal";
+import { ref, onMounted } from "vue";
+const point = ref([]);
+onMounted(() => {
+  resPoint();
 });
+const { PointResult } = PointApi();
+const resPoint = async () => {
+  const response = await PointResult();
+  if (response) {
+    response.all.forEach((items) => {
+      point.value.push(items);
+    });
+    console.log(point.value);
+  }
+};
 const set = ref({
   options: {
     legend: {
@@ -33,10 +40,10 @@ const set = ref({
       },
     },
 
-    colors: ["#60f4a0", "#1e293b"],
-    labels: ["นักเรียนดีเด่น", "นักเรียนทั่วไป"],
+    colors: ["#1e293b", "#60f4a0"],
+    labels: ["นักเรียนทั่วไป", "นักเรียนดีเด่น"],
   },
-  series: [29, 23],
+  series: point.value,
 });
 </script>
 
