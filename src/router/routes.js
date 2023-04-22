@@ -12,7 +12,6 @@ const routes = [
   },
   {
     path: "/",
-
     component: () => import("layouts/MainLayout.vue"),
     meta: { requireAuth: true },
     children: [
@@ -33,6 +32,10 @@ const routes = [
       {
         path: "/post",
         component: () => import("pages/Post.vue"),
+      },
+      {
+        path: "/teacher",
+        component: () => import("pages/EditTeacher.vue"),
       },
     ],
   },

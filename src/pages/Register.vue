@@ -205,7 +205,6 @@
                   <label for="">ชื่อจริง:</label>
                   <q-input
                     v-model="student.first_name"
-                    :rules="[(val) => !!val || 'กรุณากรอกชื่อนักเรียน']"
                     outlined
                     dense
                     color="secondary"
@@ -221,7 +220,6 @@
                     dense
                     color="secondary"
                     label="นามสกุล"
-                    :rules="[(val) => !!val || 'กรุณากรอกนามสกุลนักเรียน']"
                   />
                 </div>
               </div>
@@ -235,7 +233,6 @@
                     dense
                     color="secondary"
                     label="ชื่อเล่น"
-                    :rules="[(val) => !!val || 'กรุณากรอกชื่อเล่นนักเรียน']"
                   />
                 </div>
                 <div class="col-sm-1">
@@ -252,9 +249,6 @@
                     v-model="student.birth_date"
                     color="teal"
                     type="date"
-                    :rules="[
-                      (val) => !!val || 'กรุณากรอกวันเดือนปีเกิดนักเรียน',
-                    ]"
                   />
                 </div>
               </div>
@@ -295,11 +289,14 @@ import { useAuthenStore } from "src/stores/authen";
 import { StudentApi } from "src/api/StudentApi";
 import { ParentApi } from "src/api/ParentApi";
 import { FileApi } from "src/api/FileApi";
+import { teacherKey } from "src/boot/utils/config";
 import { ManageApi } from "src/api/ManageParent";
 import { useRouter } from "vue-router";
-import { Loading, QSpinnerGears } from "quasar";
+import { Loading, QSpinnerGears, LocalStorage } from "quasar";
+
+const room = LocalStorage.getItem(teacherKey);
 const authenStore = useAuthenStore();
-const { alertSuccess, alertWarning } = alertShow();
+const { alertSuccess, alertWarning, alertDanger } = alertShow();
 const { uploadImageApi } = FileApi();
 const { createStudent } = StudentApi();
 const lastParentId = ref([]);
@@ -307,7 +304,7 @@ const lastStudentId = ref([]);
 const { addManage } = ManageApi();
 const { createParent } = ParentApi();
 const router = useRouter();
-
+const invalid = ref(false);
 const imageFile = ref({
   parent: "",
   student: "",
@@ -397,93 +394,6 @@ const getYear = () => {
     }
   }
 };
-const addMore = async () => {
-  for (const [items, key] of Object.entries(parent.value)) {
-    console.log(typeof items);
-    if (items == "") {
-      console.log("empty");
-      invalid.value = false;
-    } else {
-      console.log("notempty");
-
-      invalid.value = true;
-    }
-  }
-  Loading.show({
-    spinner: QSpinnerGears,
-  });
-  if (imageFile.value.parent) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.parent);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      parent.value.img_file = fileNameResponse.imageName;
-    }
-  }
-  if (imageFile.value.student) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.student);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      student.value.img_file = fileNameResponse.imageName;
-    }
-  }
-  if (invalid.value === true) {
-    const responseParent = await createParent({
-      first_name: parent.value.first_name,
-      last_name: parent.value.last_name,
-      nick_name: parent.value.nick_name,
-      birth_date: parent.value.birth_date,
-      email: parent.value.email,
-      ocupation: parent.value.ocupation,
-      phone: parent.value.phone,
-      zip_code: parent.value.zip_code,
-      img_file: parent.value.img_file,
-    });
-    if (responseParent) {
-      responseParent.entity.forEach((element) => {
-        if (element) {
-          // console.log(element);
-        }
-        // lastParentId.value = element.id;
-      });
-    }
-  } else {
-    alertWarning();
-  }
-
-  const response = await createStudent({
-    special: "",
-    first_name: student.value.first_name,
-    last_name: student.value.last_name,
-    nick_name: student.value.nick_name,
-    birth_date: student.value.birth_date,
-    img_file: student.value.img_file,
-
-    status: true,
-    gender: student.value.gender,
-  });
-  if (response) {
-    response.entity.forEach((element) => {
-      if (!element) {
-        // console.log(element);
-      }
-      // lastStudentId.value = element.id;
-    });
-  }
-
-  if (lastParentId.value && lastStudentId.value) {
-    const addToManage = await addManage({
-      students_id: lastStudentId.value,
-      parent_id: lastParentId.value,
-    });
-  } else {
-    alertWarning();
-  }
-
-  Loading.hide();
-  Object.assign(old.value.student, (old.value.student = ""));
-  Object.assign(student.value, studentReset.value);
-  Object.assign(imageFile.value, imageReset.value);
-};
 
 const create = async () => {
   Loading.show({
@@ -504,22 +414,21 @@ const create = async () => {
     }
   }
 
-  if (lastParentId.value == "") {
-    const responseParent = await createParent({
-      first_name: parent.value.first_name,
-      last_name: parent.value.last_name,
-      nick_name: parent.value.nick_name,
-      birth_date: parent.value.birth_date,
-      email: parent.value.email,
-      ocupation: parent.value.ocupation,
-      phone: parent.value.phone,
-      zip_code: parent.value.zip_code,
-      img_file: parent.value.img_file,
-    });
-    responseParent.entity.forEach((items) => {
-      lastParentId.value = items.id;
-    });
-  }
+  const responseParent = await createParent({
+    first_name: parent.value.first_name,
+    last_name: parent.value.last_name,
+    nick_name: parent.value.nick_name,
+    birth_date: parent.value.birth_date,
+    email: parent.value.email,
+    ocupation: parent.value.ocupation,
+    phone: parent.value.phone,
+    zip_code: parent.value.zip_code,
+    img_file: parent.value.img_file,
+  });
+  responseParent.entity.forEach((items) => {
+    lastParentId.value = items.id;
+    console.log(responseParent);
+  });
 
   const response = await createStudent({
     special: "",
@@ -531,6 +440,7 @@ const create = async () => {
     status: true,
     teacher_id: authenStore.auth,
     gender: student.value.gender,
+    room: room,
   });
   console.log(response);
   response.entity.forEach((items) => {
@@ -538,15 +448,12 @@ const create = async () => {
     lastStudentId.value = items.id;
   });
 
-  if (lastParentId.value != 0 && lastStudentId.value != 0) {
-    const addToManage = await addManage({
-      students_id: lastStudentId.value,
-      parent_id: lastParentId.value,
-    });
-    // console.log(addToManage);
-  } else {
-    alertWarning();
-  }
+  const addToManage = await addManage({
+    students_id: lastStudentId.value,
+    parent_id: lastParentId.value,
+  });
+  // console.log(addToManage);
+
   Loading.hide();
   await alertSuccess(
     "สมัครข้อมูลนักเรียนสำเร็จ",

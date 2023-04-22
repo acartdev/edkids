@@ -7,5 +7,12 @@ export const teacherApi = () => {
       url: `/teacherReadSingle?_id=${id}`,
     });
   };
-  return { getTeacher };
+  const updateTeacher = async (req = {}) => {
+    return await callApi({
+      method: "PUT",
+      url: "/teacher",
+      body: req,
+    });
+  };
+  return { getTeacher, updateTeacher };
 };

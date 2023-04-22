@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="q-py-sm bg-white shadow-3">
+    <q-header class="q-py-sm shadow-3" :class="bgColor">
       <q-toolbar>
         <q-btn
           style="color: #1e293b"
@@ -37,16 +37,15 @@
                 <q-item class="no-padding no-margin">
                   <q-item-section class="q-px-xs q-py-sm"
                     ><q-btn
-                      text
                       dense=""
                       flat=""
-                      label="แก้ไขข้อมูลส่วนตัว"
+                      label="แก้ไขข้อมูลครู"
+                      :to="`/teacher`"
                       class="text-caption no-margin text-center"
                       icon-right="edit"
                       text-color="warning"
                     ></q-btn>
                     <q-btn
-                      text
                       dense=""
                       flat=""
                       label="ออกจากระบบ"
@@ -97,8 +96,7 @@
 </template>
 
 <script setup>
-import { Dark } from "quasar";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, onBeforeMount } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useQuasar, Notify, LocalStorage } from "quasar";
 import { teacherKey } from "src/boot/utils/config";
@@ -106,13 +104,25 @@ import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
 import { teacherApi } from "src/api/Teacher";
 import { alertShow } from "src/composable/alertShow";
+const bgColor = ref("bg-white");
 const { alertWarning } = alertShow();
 const { getTeacher } = teacherApi();
 const authenStore = useAuthenStore();
 const { userLogout, getUserDataByAuth } = AuthenApi();
 const $q = useQuasar();
-const darkMode = ref(false);
-const userId = LocalStorage.getItem(teacherKey);
+const pageTop = ref();
+onBeforeMount(() => {
+  window.addEventListener("scroll", () => {
+    pageTop.value = window.pag;
+  });
+});
+const ontop = () => {
+  if (window.pageXOffset < 0) {
+    bgColor.value = "bg-green";
+  } else {
+    bgColor.value = "bg-red";
+  }
+};
 const teacherData = ref({});
 const leftDrawerOpen = ref(false);
 
@@ -145,6 +155,7 @@ const getUser = async () => {
   if (response) {
     for (let items of response.entity) {
       teacherData.value = items;
+      LocalStorage.set(teacherKey, teacherData.value.room);
     }
   }
 };

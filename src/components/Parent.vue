@@ -5,7 +5,7 @@
       <q-card-section>
         <div class="text-h6">ข้อมูลผู้ปกครอง</div>
       </q-card-section>
-
+      {{ res }}
       <q-card-section class="q-pt-none" style="height: 290px; width: 100%">
         <div class="row fit justify-between q-gutter-sm">
           <div class="col-sm-5 flex flex-center relative-position">
@@ -19,7 +19,7 @@
                 ><q-icon size="25px" color="teal" name="edit"></q-icon></slot
             ></q-file>
             <q-img
-              :src="imgUrl ? imgUrl : res.image.thumbnail"
+              :src="imgUrl ? imgUrl : res.image?.thumbnail"
               style="
                 object-fit: cover;
                 object-position: center;
