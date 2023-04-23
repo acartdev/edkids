@@ -26,6 +26,7 @@
           >
             <q-tab name="mails" label="ผู้ปกครอง" />
             <q-tab name="alarms" label="นักเรียน" />
+            <q-tab name="more" label="เพิ่มนักเรียน" />
           </q-tabs>
 
           <q-separator />
@@ -166,6 +167,115 @@
             </q-tab-panel>
 
             <q-tab-panel name="alarms">
+              <div class="row q-gutter-sm justify-around q-mt-sm">
+                <div class="col-sm-6 q-pl-lg flex">
+                  <q-file
+                    outlined
+                    color="teal"
+                    dense
+                    v-model="imageFile.student"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="image" />
+                    </template>
+                  </q-file>
+                  <p class="text-center q-pt-sm q-ml-sm">รูปภาพของนักเรียน</p>
+                </div>
+                <div class="col-sm-5 flex justify-end items-center">
+                  <q-btn icon="add" @click="addMore()" dense color="teal">
+                    <q-tooltip> เพิ่มนักเรียนกรณีมีมากกว่า1คน </q-tooltip>
+                  </q-btn>
+                </div>
+                <div class="col-sm-11">
+                  <q-radio
+                    keep-color
+                    v-model="student.gender"
+                    :val="true"
+                    label="เด็กชาย"
+                    color="teal"
+                  />
+                  <q-radio
+                    keep-color
+                    v-model="student.gender"
+                    :val="false"
+                    label="เด็กหญิง"
+                    color="pink"
+                  />
+                </div>
+                <div class="col-sm-5">
+                  <label for="">ชื่อจริง:</label>
+                  <q-input
+                    v-model="student.first_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="ชื่อจริง"
+                  />
+                </div>
+                <div class="col-sm-5">
+                  <label for="">นามสกุลจริง:</label>
+
+                  <q-input
+                    v-model="student.last_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="นามสกุล"
+                  />
+                </div>
+              </div>
+              <div class="row items-center q-gutter-md justify-center q-mt-sm">
+                <div class="col-sm-3">
+                  <label for="">ชื่อเล่น:</label>
+
+                  <q-input
+                    v-model="student.nick_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="ชื่อเล่น"
+                  />
+                </div>
+                <div class="col-sm-1">
+                  <q-input v-model="old.student" label="อายุ" disable></q-input>
+                </div>
+                <div class="col-sm-1 q-mr-md q-pt-lg">
+                  <p class="text-h6">ขวบ</p>
+                </div>
+                <div class="col-sm-5">
+                  <label for="">วัน/เดือน/ปี เกิด:</label>
+
+                  <q-input
+                    @blur="getYear()"
+                    v-model="student.birth_date"
+                    color="teal"
+                    type="date"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="flex justify-end q-gutter-sm items-center q-mt-md q-mr-lg"
+              >
+                <div class="">
+                  <q-btn
+                    type="submit"
+                    class="text-secondary q-mr-sm"
+                    outline
+                    rounded
+                    label="บันทึก"
+                  ></q-btn>
+                  <q-btn
+                    class="text-warning"
+                    @click="clear(), (tab = 'mails'), alertWarning()"
+                    outline
+                    rounded
+                    label="ยกเลิก"
+                  ></q-btn>
+                </div>
+              </div>
+            </q-tab-panel>
+            <q-tab-panel name="more">
               <div class="row q-gutter-sm justify-around q-mt-sm">
                 <div class="col-sm-6 q-pl-lg flex">
                   <q-file
