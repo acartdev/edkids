@@ -181,11 +181,7 @@
                   </q-file>
                   <p class="text-center q-pt-sm q-ml-sm">รูปภาพของนักเรียน</p>
                 </div>
-                <div class="col-sm-5 flex justify-end items-center">
-                  <q-btn icon="add" @click="addMore()" dense color="teal">
-                    <q-tooltip> เพิ่มนักเรียนกรณีมีมากกว่า1คน </q-tooltip>
-                  </q-btn>
-                </div>
+                <div class="col-sm-5 flex justify-end items-center"></div>
                 <div class="col-sm-11">
                   <q-radio
                     keep-color
@@ -275,6 +271,7 @@
                 </div>
               </div>
             </q-tab-panel>
+
             <q-tab-panel name="more">
               <div class="row q-gutter-sm justify-around q-mt-sm">
                 <div class="col-sm-6 q-pl-lg flex">
@@ -291,9 +288,14 @@
                   <p class="text-center q-pt-sm q-ml-sm">รูปภาพของนักเรียน</p>
                 </div>
                 <div class="col-sm-5 flex justify-end items-center">
-                  <q-btn icon="add" @click="addMore()" dense color="teal">
-                    <q-tooltip> เพิ่มนักเรียนกรณีมีมากกว่า1คน </q-tooltip>
-                  </q-btn>
+                  <q-select
+                    v-model="selectPr"
+                    :options="options"
+                    color="teal"
+                    @update:model-value="test"
+                    label="เลือกผู้ปกครอง"
+                    style="width: 250px"
+                  />
                 </div>
                 <div class="col-sm-11">
                   <q-radio
@@ -368,7 +370,7 @@
               >
                 <div class="">
                   <q-btn
-                    type="submit"
+                    @click="addParent"
                     class="text-secondary q-mr-sm"
                     outline
                     rounded
@@ -393,7 +395,7 @@
 
 <script setup>
 import { biArrowBarRight } from "@quasar/extras/bootstrap-icons";
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { alertShow } from "src/composable/alertShow";
 import { useAuthenStore } from "src/stores/authen";
 import { StudentApi } from "src/api/StudentApi";
@@ -403,7 +405,8 @@ import { teacherKey } from "src/boot/utils/config";
 import { ManageApi } from "src/api/ManageParent";
 import { useRouter } from "vue-router";
 import { Loading, QSpinnerGears, LocalStorage } from "quasar";
-
+const selectPr = ref("เลือกผู้ปกครองของนักเรียน");
+const listOption = ref([]);
 const room = LocalStorage.getItem(teacherKey);
 const authenStore = useAuthenStore();
 const { alertSuccess, alertWarning, alertDanger } = alertShow();
@@ -412,9 +415,10 @@ const { createStudent } = StudentApi();
 const lastParentId = ref([]);
 const lastStudentId = ref([]);
 const { addManage } = ManageApi();
-const { createParent } = ParentApi();
+const { createParent, selectParents } = ParentApi();
 const router = useRouter();
-const invalid = ref(false);
+const parentId = ref();
+const options = [];
 const imageFile = ref({
   parent: "",
   student: "",
@@ -438,6 +442,7 @@ old.value.student = "";
 old.value.parent = "";
 
 const student = ref({
+  special: "",
   first_name: "",
   last_name: "",
   nick_name: "",
@@ -445,6 +450,8 @@ const student = ref({
   img_file: "",
   teacher_id: "",
   gender: "",
+  room: "",
+  status: true,
 });
 const parent = ref({
   first_name: "",
@@ -467,12 +474,7 @@ const studentReset = ref({
   gender: "",
 });
 const clear = () => {
-  old.value.parent = "";
-  old.value.student = "";
-
-  Object.assign(student.value, studentReset.value);
-  Object.assign(parent.value, parentReset.value);
-  Object.assign(imageFile.value, imageReset.value);
+  old.value = {};
 };
 const year = ref("");
 
@@ -504,8 +506,37 @@ const getYear = () => {
     }
   }
 };
+const addParent = async () => {
+  if (parentId.value) {
+    student.value.room = room;
+    student.value.teacher_id = authenStore.auth;
+    const response = await createStudent(student.value);
+    if (response && response.entity) {
+      lastStudentId.value = response.entity.id;
+    }
+
+    if (parentId.value) {
+      const addToManage = await addManage({
+        students_id: lastStudentId.value,
+        parent_id: parentId.value,
+      });
+    }
+    await alertSuccess(
+      "เพิ่มข้อมูลนักเรียนสำเร็จ",
+      `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
+    );
+    student.value = {};
+  } else {
+    alertDanger(
+      "สมัครรับข้อมูลไม่สำเร็จ",
+      "ไม่สามารถสมัครรับข้อมูลกรุณาตรวจสอบข้อมูลให้ครบถ้วน"
+    );
+  }
+};
 
 const create = async () => {
+  student.value.room = room;
+  student.value.teacher_id = authenStore.auth;
   Loading.show({
     spinner: QSpinnerGears,
   });
@@ -524,45 +555,23 @@ const create = async () => {
     }
   }
 
-  const responseParent = await createParent({
-    first_name: parent.value.first_name,
-    last_name: parent.value.last_name,
-    nick_name: parent.value.nick_name,
-    birth_date: parent.value.birth_date,
-    email: parent.value.email,
-    ocupation: parent.value.ocupation,
-    phone: parent.value.phone,
-    zip_code: parent.value.zip_code,
-    img_file: parent.value.img_file,
-  });
+  const responseParent = await createParent(parent.value);
   responseParent.entity.forEach((items) => {
     lastParentId.value = items.id;
     console.log(responseParent);
   });
 
-  const response = await createStudent({
-    special: "",
-    first_name: student.value.first_name,
-    last_name: student.value.last_name,
-    nick_name: student.value.nick_name,
-    birth_date: student.value.birth_date,
-    img_file: student.value.img_file,
-    status: true,
-    teacher_id: authenStore.auth,
-    gender: student.value.gender,
-    room: room,
-  });
+  const response = await createStudent(student.value);
   console.log(response);
-  response.entity.forEach((items) => {
-    console.log(items);
-    lastStudentId.value = items.id;
-  });
+  if (response && response.entity) {
+    lastStudentId.value = response.entity.id;
+  }
 
   const addToManage = await addManage({
     students_id: lastStudentId.value,
     parent_id: lastParentId.value,
   });
-  // console.log(addToManage);
+  console.log(addToManage);
 
   Loading.hide();
   await alertSuccess(
@@ -572,6 +581,25 @@ const create = async () => {
 
   router.push("/list");
 };
+const listSelect = async () => {
+  const response = await selectParents();
+  if (response) {
+    listOption.value = response.entity;
+    listOption.value.forEach((items) => {
+      options.push({
+        label: items.first_name + " " + items.last_name,
+        values: items.id,
+      });
+    });
+  }
+};
+const test = (val) => {
+  console.log(val.values);
+  parentId.value = val.values;
+};
+onMounted(() => {
+  listSelect();
+});
 </script>
 
 <style lang="scss" scoped></style>

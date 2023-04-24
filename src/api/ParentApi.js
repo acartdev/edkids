@@ -28,9 +28,16 @@ export const ParentApi = () => {
       body: req,
     });
   };
+  const selectParents = async () => {
+    return await callApi({
+      method: "GET",
+      url: "/selectParents",
+    });
+  };
   return {
     getParentList,
     createParent,
     updateParent,
+    selectParents,
   };
 };
