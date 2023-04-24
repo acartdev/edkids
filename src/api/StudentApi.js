@@ -46,6 +46,13 @@ export const StudentApi = () => {
       body: req,
     });
   };
+
+  const getOne = async (id) => {
+    return await callApi({
+      method: "GET",
+      url: `/studentsReadSingle?_id=${id}`,
+    });
+  };
   return {
     getStudentList,
     deleteStudent,
@@ -53,5 +60,6 @@ export const StudentApi = () => {
     listYears,
     listPoint,
     updateStudent,
+    getOne,
   };
 };

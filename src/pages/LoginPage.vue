@@ -109,13 +109,15 @@
 
 <script setup>
 import { ref } from "vue";
-import { Loading, QSpinnerGears } from "quasar";
+import { Loading, QSpinnerGears, useQuasar } from "quasar";
 import { AuthenApi } from "src/api/AuthenApi";
 import { alertShow } from "src/composable/alertShow";
 import { useAuthenStore } from "src/stores/authen";
-const authenStore = useAuthenStore();
+
 const { alertDanger, alertSuccess } = alertShow();
 const { loginProcess } = AuthenApi();
+
+const authenStore = useAuthenStore();
 const tab = ref("mails");
 const stdCode = ref("");
 const show = ref(true);
@@ -123,17 +125,20 @@ const birth = ref("");
 const email = ref("");
 const teacherData = ref();
 const password = ref("");
+
 const emailInvalid = (val) => !!val || "กรุณากรอกอีเมลล์";
 const passwordInvalid = (val) => !!val || "กรุณาใส่รหัสผ่าน";
 const codeInvalid = (val) => !!val || "กรุณากรอกรหัสนักเรียน";
 const birthInvalid = (val) => !!val || "กรุณากรอกวันเดือนปีเกิด";
+
 const onSubmit = () => {
   if (tab.value == "alarms") {
     teacherLogin();
   } else if (tab.value == "mails") {
-    studentLogin();
+    userSubmit();
   }
 };
+
 const teacherLogin = async () => {
   Loading.show({
     spinner: QSpinnerGears,
@@ -142,15 +147,17 @@ const teacherLogin = async () => {
     _u: email.value,
     _p: password.value,
   });
+
   Loading.hide();
   console.log(response.status);
+
   if (response && response.userData) {
     teacherData.value = response.userData;
     authenStore.setAuthen(teacherData.value);
     // console.log(teacherData.value);
     alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
     setTimeout(() => {
-      window.location.replace("/");
+      window.location.replace("#/admin");
     }, 800);
   } else if (response.status != true) {
     alertDanger(
@@ -160,11 +167,43 @@ const teacherLogin = async () => {
   }
 };
 const studentLogin = async () => {
-  const response = await loginProcess({
+  const stdResponse = await loginProcess({
     _u: email.value,
     _p: password.value,
   });
-  // console.log(response);
+};
+
+// user login part
+
+const userSubmit = async () => {
+  // cut / in password
+
+  const day = birth.value.substring(0, 2);
+  const month = birth.value.substring(3, 5);
+  const year = birth.value.substring(6, 10);
+  const result = year + month + day;
+
+  const response = await loginProcess({
+    _u: stdCode.value,
+    _p: result,
+  });
+  // if logined success
+  if (response && response.userData && response.userData.apiKey) {
+    authenStore.setUserAuthen(response.userData);
+    // $q.notify({
+    //   message: "Login Success!!",
+    //   // avatar: response.userData.picture.path,
+    // });
+    alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับ");
+    setTimeout(() => {
+      window.location.replace("#/homePage");
+    }, 500);
+  } else if (response.status != true) {
+    alertDanger(
+      "เข้าสู่ระบบไม่สำเร็จ",
+      "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง"
+    );
+  }
 };
 </script>
 

@@ -30,7 +30,10 @@
 
           <div class="q-ml-sm">
             <q-avatar style="width: 60px; height: 60px">
-              <img :src="teacherData.image?.thumbnail" />
+              <img
+                :src="teacherData.image?.thumbnail"
+                style="object-fit: cover"
+              />
             </q-avatar>
             <q-menu>
               <q-list>
@@ -106,10 +109,12 @@ import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
 import { teacherApi } from "src/api/Teacher";
 import { alertShow } from "src/composable/alertShow";
+
 const { alertWarning } = alertShow();
 const { getTeacher } = teacherApi();
-const authenStore = useAuthenStore();
 const { userLogout, getUserDataByAuth } = AuthenApi();
+
+const authenStore = useAuthenStore();
 const $q = useQuasar();
 const darkMode = ref(false);
 const userId = LocalStorage.getItem(teacherKey);
@@ -140,6 +145,7 @@ const logOut = () => {
 onMounted(() => {
   getUserProcess();
 });
+
 const getUser = async () => {
   const response = await getTeacher(authenStore.auth);
   if (response) {
@@ -148,6 +154,7 @@ const getUser = async () => {
     }
   }
 };
+
 const getUserProcess = async () => {
   const response = await getUserDataByAuth();
   if (response && response.userData) {
@@ -155,6 +162,7 @@ const getUserProcess = async () => {
   }
   getUser();
 };
+
 const logoutProcess = async () => {
   const response = await userLogout();
 
@@ -171,6 +179,7 @@ const logoutProcess = async () => {
     }, 500);
   }
 };
+
 const linksList = ref([
   {
     title: "หน้าแรก",
