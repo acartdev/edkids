@@ -3,8 +3,8 @@
     <td class="text-left">{{ detail.index }}</td>
     <td class="text-center">
       <q-img
-        v-if="postImage != ''"
-        :src="postImage"
+        v-if="postImage.length > 0"
+        :src="postImage[0]"
         style="max-width: 130px; height: 80px"
         fit="cover"
       >
@@ -35,7 +35,7 @@ const { ListPostImg, deleteImgPost } = PostImageApi();
 const shows = ref(false);
 const postData = ref({});
 const saveData = ref([]);
-const postImage = ref();
+const postImage = ref([]);
 const detail = defineProps({
   index: Number,
   id: {
@@ -61,9 +61,10 @@ const deletePost = () => {
 };
 const ListImage = async () => {
   const response = await ListPostImg(detail.id);
-  saveData.value = response.entity[0].image;
-  console.log(saveData.value.thumbnail);
-  postImage.value = saveData.value.thumbnail;
+  for (let image of response.entity) {
+    postImage.value.push(image.image.thumbnail);
+    console.log(postImage.value);
+  }
 };
 </script>
 

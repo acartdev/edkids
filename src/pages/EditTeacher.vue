@@ -59,7 +59,7 @@
           </div>
         </q-card-section>
         <q-card-section align="right">
-          <q-btn to="/" label="ยกเลิก"> </q-btn>
+          <q-btn to="/admin" label="ยกเลิก"> </q-btn>
           <q-btn
             label="แก้ไข"
             @click="updateProcess()"
@@ -97,13 +97,13 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { LocalStorage } from "quasar";
 import { teacherKey } from "src/boot/utils/config";
 import { teacherApi } from "src/api/Teacher";
 import { alertShow } from "src/composable/alertShow";
 import { FileApi } from "src/api/FileApi";
+import { useRouter } from "vue-router";
 const show = ref(true);
 const { uploadImageApi } = FileApi();
 const { alertSuccess, alertWarning } = alertShow();
@@ -146,7 +146,7 @@ const updateProcess = async () => {
       "ท่านได้ทำการแก้ไขข้อมูลส่วนตัวสำเร็จ"
     );
     setTimeout(() => {
-      window.location.replace("/");
+      router.push("/admin");
     }, 500);
   }
 };

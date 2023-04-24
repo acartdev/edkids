@@ -67,5 +67,6 @@ export const StudentApi = () => {
     listPoint,
     updateStudent,
     getOne,
+    readSingle,
   };
 };

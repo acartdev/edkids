@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { LocalStorage } from "quasar";
-import { authenKey, teacherKey } from "src/boot/utils/config";
+import { authenKey, teacherKey, studentKey } from "src/boot/utils/config";
 
 export const useAuthenStore = defineStore("authenStore", {
   state: async () => ({
