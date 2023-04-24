@@ -27,17 +27,20 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, onUpdated, ref } from "vue";
 import Modal from "src/components/Modal.vue";
 import PostList from "src/components/PostList.vue";
 import { PostImageApi } from "src/api/PostImage";
 import { alertShow } from "src/composable/alertShow";
 import { Loading, QSpinnerGears } from "quasar";
 import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
 const $q = useQuasar();
+const router = useRouter();
 const { alertSuccess, alertWarning } = alertShow();
-const { ListPost, deletePost, deleteImgPost } = PostImageApi();
+const { ListPost, deletePost, deleteImgPost, ListPostImg } = PostImageApi();
 const PostData = ref([]);
+const imageData = ref([]);
 const confirm = (val, id) => {
   $q.dialog({
     title: "ยืนยันการลบ?",
@@ -56,7 +59,6 @@ const confirm = (val, id) => {
       await deletePosts(val, id);
 
       await alertSuccess("ลบโพสต์สำเร็จ", "คุณได้ทำการลบโพสสำเร็จแล้ว");
-      location.reload();
     })
 
     .onCancel(() => {
