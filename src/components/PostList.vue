@@ -4,10 +4,11 @@
     <td class="text-center">
       <q-img
         v-if="postImage != ''"
-        :src="postImage[0]"
+        :src="postImage"
         style="max-width: 130px; height: 80px"
         fit="cover"
-      ></q-img>
+      >
+      </q-img>
       <p v-else>ไม่มีรูปภาพ</p>
     </td>
     <td class="text-center">{{ detail.msg }}</td>
@@ -26,14 +27,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { PostImageApi } from "src/api/PostImage";
 import PostEdit from "./PostEdit.vue";
 const deleted = defineEmits(["deleted"]);
 const { ListPostImg, deleteImgPost } = PostImageApi();
 const shows = ref(false);
 const postData = ref({});
-const postImage = ref([]);
+const saveData = ref([]);
+const postImage = ref();
 const detail = defineProps({
   index: Number,
   id: {
@@ -54,14 +56,14 @@ onMounted(() => {
   ListImage();
   postData.value = detail;
 });
-const deletePost = async () => {
+const deletePost = () => {
   deleted("deleted", detail.index, detail.id);
 };
 const ListImage = async () => {
   const response = await ListPostImg(detail.id);
-  for (let image of response.entity) {
-    postImage.value.push(image.image.thumbnail);
-  }
+  saveData.value = response.entity[0].image;
+  console.log(saveData.value.thumbnail);
+  postImage.value = saveData.value.thumbnail;
 };
 </script>
 

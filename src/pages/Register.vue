@@ -465,21 +465,8 @@ const parent = ref({
   img_file: "",
 });
 
-const studentReset = ref({
-  first_name: "",
-  last_name: "",
-  nick_name: "",
-  birth_date: "",
-  img_file: "",
-  gender: "",
-});
-const clear = () => {
-  old.value = {};
-};
 const year = ref("");
-
 const tab = ref("mails");
-
 const getYear = () => {
   const date = new Date();
 
@@ -535,51 +522,68 @@ const addParent = async () => {
 };
 
 const create = async () => {
-  student.value.room = room;
-  student.value.teacher_id = authenStore.auth;
-  Loading.show({
-    spinner: QSpinnerGears,
-  });
-  if (imageFile.value.parent) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.parent);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      parent.value.img_file = fileNameResponse.imageName;
+  if (
+    student.value.first_name != "" ||
+    student.value.last_name != "" ||
+    student.value.nick_name != "" ||
+    parent.value.first_name != "" ||
+    parent.value.last_name != "" ||
+    parent.value.nick_name != "" ||
+    parent.value.ocupation != "" ||
+    parent.value.birth_date != "" ||
+    student.value.birth_date != ""
+  ) {
+    student.value.room = room;
+    student.value.teacher_id = authenStore.auth;
+    Loading.show({
+      spinner: QSpinnerGears,
+    });
+    if (imageFile.value.parent) {
+      const fileNameResponse = await uploadImageApi(imageFile.value.parent);
+      console.log("uploadImageApi", fileNameResponse);
+      if (fileNameResponse && fileNameResponse.imageName) {
+        parent.value.img_file = fileNameResponse.imageName;
+      }
     }
-  }
-  if (imageFile.value.student) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.student);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      student.value.img_file = fileNameResponse.imageName;
+    if (imageFile.value.student) {
+      const fileNameResponse = await uploadImageApi(imageFile.value.student);
+      console.log("uploadImageApi", fileNameResponse);
+      if (fileNameResponse && fileNameResponse.imageName) {
+        student.value.img_file = fileNameResponse.imageName;
+      }
     }
+
+    const responseParent = await createParent(parent.value);
+    responseParent.entity.forEach((items) => {
+      lastParentId.value = items.id;
+      console.log(responseParent);
+    });
+
+    const response = await createStudent(student.value);
+    console.log(response);
+    if (response && response.entity) {
+      lastStudentId.value = response.entity.id;
+    }
+
+    const addToManage = await addManage({
+      students_id: lastStudentId.value,
+      parent_id: lastParentId.value,
+    });
+    console.log(addToManage);
+
+    Loading.hide();
+    await alertSuccess(
+      "สมัครข้อมูลนักเรียนสำเร็จ",
+      `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
+    );
+
+    router.push("/list");
+  } else {
+    alertDanger(
+      "สมัครรับข้อมูลไม่สำเร็จ",
+      "ไม่สามารถสมัครรับข้อมูลกรุณาตรวจสอบข้อมูลให้ครบถ้วน"
+    );
   }
-
-  const responseParent = await createParent(parent.value);
-  responseParent.entity.forEach((items) => {
-    lastParentId.value = items.id;
-    console.log(responseParent);
-  });
-
-  const response = await createStudent(student.value);
-  console.log(response);
-  if (response && response.entity) {
-    lastStudentId.value = response.entity.id;
-  }
-
-  const addToManage = await addManage({
-    students_id: lastStudentId.value,
-    parent_id: lastParentId.value,
-  });
-  console.log(addToManage);
-
-  Loading.hide();
-  await alertSuccess(
-    "สมัครข้อมูลนักเรียนสำเร็จ",
-    `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
-  );
-
-  router.push("/list");
 };
 const listSelect = async () => {
   const response = await selectParents();

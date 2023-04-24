@@ -101,7 +101,7 @@
               <div class="col-sm-5">
                 <q-input
                   class=""
-                  :readonly="false"
+                  :readonly="true"
                   v-model="parentEntity.amouts"
                   v-if="parentEntity.pms"
                   dense=""

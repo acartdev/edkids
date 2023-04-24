@@ -1,6 +1,6 @@
 <template>
   <q-page class="row justify-center">
-    <q-list v-if="check" class="col-sm-9 q-gutter-md">
+    <q-list v-if="check" class="col-sm-9 col-12 q-gutter-md">
       <template class="flex justify-between">
         <q-item-label header class="text-h5">รายชื่อนักเรียน</q-item-label>
         <q-input

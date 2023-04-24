@@ -13,7 +13,7 @@
         </div>
         <chartYears v-else :years="years" :amount="amount" />
       </div>
-      <div class="col-sm-5 bg-white q-pt-lg shadow-20">
+      <div class="col-sm-5 col-12 bg-white q-pt-lg shadow-20">
         <div v-if="loadding" class="fit flex flex-center">
           <q-spinner-pie size="300px" color="green-13" />
         </div>
@@ -23,7 +23,7 @@
 
     <div class="row fit justify-center items-center q-pb-lg">
       <div
-        class="col-sm-11 bg-white self-strech q-pa-md shadow-12"
+        class="col-sm-11 col-11 bg-white self-strech q-pa-md shadow-12"
         style="min-height: 560px"
       >
         <div class="flex items-center column">
