@@ -7,15 +7,6 @@ export const teacherApi = () => {
       url: `/teacherReadSingle?_id=${id}`,
     });
   };
-<<<<<<< HEAD
-  const getOneTeacher = async (id) => {
-    return await callApi({
-      method: "GET",
-      url: `/teacherReadSingle?_id=${id}`,
-    });
-  };
-  return { getTeacher, getOneTeacher };
-=======
   const updateTeacher = async (req = {}) => {
     return await callApi({
       method: "PUT",
@@ -24,5 +15,4 @@ export const teacherApi = () => {
     });
   };
   return { getTeacher, updateTeacher };
->>>>>>> refs/remotes/origin/main
 };
