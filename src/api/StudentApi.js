@@ -26,6 +26,12 @@ export const StudentApi = () => {
       body: req,
     });
   };
+  const readSingle = async (id) => {
+    return await callApi({
+      method: "GET",
+      url: `/studentsReadSingle?_id=${id}`,
+    });
+  };
   const listYears = async () => {
     return await callApi({
       method: "GET",

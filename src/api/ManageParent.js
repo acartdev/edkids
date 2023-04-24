@@ -12,10 +12,10 @@ export const ManageApi = () => {
       url: `/students?page=${req.page}&perPage=${req.perPage}`,
     });
   };
-  const deleteStudent = async (id) => {
+  const getListParent = async (id) => {
     return await callApi({
-      method: "DELETE",
-      url: `/students?_ids=${id}`,
+      method: "GET",
+      url: `/readParent?_id=${id}`,
     });
   };
   const addManage = async (req = {}) => {
@@ -47,5 +47,6 @@ export const ManageApi = () => {
   };
   return {
     addManage,
+    getListParent,
   };
 };

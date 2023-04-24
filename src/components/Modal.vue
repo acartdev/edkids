@@ -57,26 +57,38 @@
               <div class="col-sm-12">
                 <q-list class="shadow-2">
                   <q-scroll-area class="" style="height: 300px">
-                    <q-item v-for="(index, items) in imageData" :key="items">
-                      <q-item-section>
-                        {{ index.name }}
-                      </q-item-section>
-                      <q-item-section>
-                        <q-img
-                          class="q-mx-auto"
-                          style="max-height: 150px; max-width: 130px"
-                          :src="index.img"
-                        ></q-img>
-                      </q-item-section>
-                      <q-item-section side="">
-                        <q-btn
-                          dense=""
-                          flat=""
-                          @click="imageData.splice(index, 1)"
-                          icon="delete"
-                        ></q-btn>
-                      </q-item-section>
-                    </q-item>
+                    <div class="" v-if="imageData != ''">
+                      <q-item v-for="(index, items) in imageData" :key="items">
+                        <q-item-section>
+                          {{ index.name }}
+                        </q-item-section>
+                        <q-item-section>
+                          <q-img
+                            class="q-mx-auto"
+                            style="max-height: 150px; max-width: 130px"
+                            :src="index.img"
+                          ></q-img>
+                        </q-item-section>
+                        <q-item-section side="">
+                          <q-btn
+                            dense=""
+                            flat=""
+                            @click="canCel(items)"
+                            icon="delete"
+                          ></q-btn>
+                        </q-item-section>
+                      </q-item>
+                    </div>
+                    <p v-else class="text-center text-h6 q-mt-xl">
+                      อัพโหลดรูปภาพ
+                      <slot>
+                        <q-icon
+                          class="q-pb-sm"
+                          size="50px"
+                          name="cloud_upload"
+                        ></q-icon>
+                      </slot>
+                    </p>
                   </q-scroll-area>
                 </q-list>
               </div>
@@ -84,7 +96,13 @@
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn flat label="ยกเลิก" class="text-warning" v-close-popup />
+            <q-btn
+              flat
+              label="ยกเลิก"
+              class="text-warning"
+              v-close-popup
+              @click="msg = ''"
+            />
             <q-btn flat label="โพสต์" class="text-teal" type="submit" />
           </q-card-actions>
         </q-form>
@@ -98,17 +116,19 @@ import { ref } from "vue";
 import { FileApi } from "src/api/FileApi";
 import { PostImageApi } from "src/api/PostImage";
 import { Loading, QSpinnerGears } from "quasar";
-import { useRouter } from "vue-router";
 import { alertShow } from "src/composable/alertShow";
 const { alertSuccess } = alertShow();
 const { PostImage, PostMsg } = PostImageApi();
 const { uploadImageApi } = FileApi();
 const msg = ref("");
 const props = defineProps(["prompt"]);
-const router = useRouter();
 const pops = ref(false);
 const imageData = ref([]);
 const imageList = ref([]);
+const canCel = (index) => {
+  imageData.value.splice(index, 1);
+  imageList.value = [];
+};
 const imageFile = (file = []) => {
   for (let i = 0; i < file.length; i++) {
     imageList.value.push(file[i]);
@@ -130,7 +150,7 @@ const postData = async () => {
       img_name: img,
       postId: postMsg,
     });
-    console.log(postData);
+    // console.log(postData);
   }
   Loading.hide();
   pops.value = false;

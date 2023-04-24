@@ -38,7 +38,7 @@
     <q-item-section center side>
       <div class="text-grey-8 q-gutter-xs">
         <q-btn
-          @click="show = !show"
+          :to="`/edit-student/edit/${res.id}`"
           class="gt-xs"
           size="12px"
           flat
@@ -65,206 +65,30 @@
           @click="pops = !pops"
           flat
           dense
+          :to="`/edit-student/list/${res.id}`"
           round
           icon="groups"
           color="teal"
-          ><q-tooltip>ข้อมูลผู้ปกครอง</q-tooltip></q-btn
+          ><q-tooltip>ข้อมูลผู้ทั้งหมดของนักเรียน</q-tooltip></q-btn
         >
       </div>
     </q-item-section>
-
-    <!-- edit -->
-    <q-dialog v-model="show" persistent>
-      <q-card style="min-width: 500px">
-        <q-card-section>
-          <div class="text-h6">แก้ไขข้อมูลนักเรียน</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <div class="row justify-center">
-            <div class="col-sm-6 flex flex-center relative-position">
-              <q-file
-                @update:model-value="imageFile"
-                dense=""
-                borderless=""
-                class="absolute-top-right q-mr-xl"
-                style="z-index: 10"
-                ><slot
-                  ><q-icon size="25px" color="teal" name="edit"></q-icon></slot
-              ></q-file>
-              <q-img
-                height="200px"
-                width="150px"
-                :src="imgUrl ? imgUrl : res.image.thumbnail"
-              >
-              </q-img>
-            </div>
-            <div class="col-sm-6">
-              <div class="row q-gutter-sm justify-around items-center">
-                <div class="col-sm-11">
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <q-input
-                        disable
-                        color="teal"
-                        v-model="special"
-                        label="รหัสนักเรียน"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-5">
-                  <q-input
-                    clearable
-                    color="teal"
-                    v-model="first_name"
-                    label="ชื่อจริง"
-                  />
-                </div>
-                <div class="col-sm-5">
-                  <q-input
-                    clearable
-                    color="teal"
-                    v-model="last_name"
-                    label="นามสกุล"
-                  />
-                </div>
-                <div class="col-sm-5">
-                  <q-input
-                    clearable
-                    color="teal"
-                    v-model="nick_name"
-                    label="ชื่อเล่น"
-                  />
-                </div>
-                <div class="col-sm-5">
-                  <q-input
-                    clearable
-                    color="teal"
-                    mask="####/##/##"
-                    fill-mask
-                    v-model="birth_date"
-                    label="วันเดือนปีเกิด"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <q-btn
-            color="negative"
-            flat
-            label="ยกเลิก"
-            @click="(show = false), alertWarning()"
-          />
-          <q-btn
-            color="warning"
-            flat
-            label="แก้ไขข้อมูล"
-            @click="updateProcessed()"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <!-- edit -->
-
-    <parent
-      :special="res.special"
-      :show="pops"
-      v-for="(items, index) in parentList"
-      :key="index"
-      v-bind="items"
-      @close="closePop()"
-    ></parent>
   </q-item>
 </template>
 
 <script setup>
 import { useQuasar } from "quasar";
-import Parent from "./Parent.vue";
+
 import { StudentApi } from "src/api/StudentApi";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { alertShow } from "src/composable/alertShow";
-import { ParentApi } from "src/api/ParentApi";
-import { FileApi } from "src/api/FileApi";
-const { uploadImageApi } = FileApi();
-const { getParentList, updateParent } = ParentApi();
 const { alertWarning, alertSuccess } = alertShow();
 const $q = useQuasar();
-const { deleteStudent, updateStudent } = StudentApi();
+const { deleteStudent } = StudentApi();
 const show = ref(false);
-const special = ref(res.special);
-const first_name = ref(res.first_name);
-const last_name = ref(res.last_name);
-const nick_name = ref(res.nick_name);
-const birth_date = ref(res.birth_date);
 const emit = defineEmits(["index"]);
 const pops = ref(false);
-const haveImage = ref(false);
-const imgUrl = ref();
-const parentList = ref([]);
-const editImage = ref("");
-const imageSend = ref();
-const imageFile = (val) => {
-  imgUrl.value = URL.createObjectURL(val);
-  imageSend.value = val;
-};
-const closePop = () => {
-  pops.value = false;
-};
 const year = ref();
-const listParent = async () => {
-  const response = await getParentList(res.id);
-  if (response) {
-    parentList.value = response.entity;
-  }
-};
-
-const updateProcessed = async () => {
-  if (!first_name.value) {
-    first_name.value = res.first_name;
-  } else if (!last_name.value) {
-    last_name.value = res.last_name;
-  } else if (!nick_name.value) {
-    nick_name.value = res.nick_name;
-  } else if (!birth_date.value) {
-    birth_date.value = res.birth_date;
-  }
-  if (imageSend.value) {
-    const fileNameResponse = await uploadImageApi(imageSend.value);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      editImage.value = fileNameResponse.imageName;
-    }
-  }
-  if (
-    student.value.img_file != "" ||
-    student.value.img_file ||
-    student.value.img_file == null
-  ) {
-    haveImage.value = true;
-  }
-
-  const response = await updateStudent({
-    haveImage: haveImage.value,
-    id: res.id,
-    first_name: first_name.value,
-    last_name: last_name.value,
-    nick_name: nick_name.value,
-    birth_date: birth_date.value,
-    img_file: editImage.value,
-  });
-  // console.log(response);
-  await alertSuccess(
-    "อัพเดตข้อมูลสำเร็จ",
-    `คุณได้อัพเดตข้อมูลของนักเรียนรหัส ${res.special} แล้ว`
-  );
-  location.reload();
-};
-
 const res = defineProps({
   index: Number,
   search: String,
@@ -294,9 +118,7 @@ const res = defineProps({
   gender: {
     type: Number,
   },
-  room: {
-    type: String,
-  },
+  room: {},
   img_file: String,
 });
 const student = ref({
@@ -312,9 +134,7 @@ const student = ref({
 });
 
 onMounted(() => {
-  listParent();
   student.value = res;
-
   const date = new Date();
   year.value = date.getFullYear() - res.birth_date.substring(0, 4);
 });

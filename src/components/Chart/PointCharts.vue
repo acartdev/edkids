@@ -2,6 +2,7 @@
   <div class="fit">
     <apexchart
       type="donut"
+      width="100%"
       height="300px"
       :options="set.options"
       :series="set.series"
@@ -35,7 +36,7 @@ const set = ref({
       pie: {
         customScale: 0.9,
         donut: {
-          size: "40%",
+          size: "45",
         },
       },
     },

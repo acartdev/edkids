@@ -26,6 +26,7 @@
           >
             <q-tab name="mails" label="ผู้ปกครอง" />
             <q-tab name="alarms" label="นักเรียน" />
+            <q-tab name="more" label="เพิ่มนักเรียน" />
           </q-tabs>
 
           <q-separator />
@@ -180,11 +181,7 @@
                   </q-file>
                   <p class="text-center q-pt-sm q-ml-sm">รูปภาพของนักเรียน</p>
                 </div>
-                <div class="col-sm-5 flex justify-end items-center">
-                  <q-btn icon="add" @click="addMore()" dense color="teal">
-                    <q-tooltip> เพิ่มนักเรียนกรณีมีมากกว่า1คน </q-tooltip>
-                  </q-btn>
-                </div>
+                <div class="col-sm-5 flex justify-end items-center"></div>
                 <div class="col-sm-11">
                   <q-radio
                     keep-color
@@ -205,7 +202,6 @@
                   <label for="">ชื่อจริง:</label>
                   <q-input
                     v-model="student.first_name"
-                    :rules="[(val) => !!val || 'กรุณากรอกชื่อนักเรียน']"
                     outlined
                     dense
                     color="secondary"
@@ -221,7 +217,6 @@
                     dense
                     color="secondary"
                     label="นามสกุล"
-                    :rules="[(val) => !!val || 'กรุณากรอกนามสกุลนักเรียน']"
                   />
                 </div>
               </div>
@@ -235,7 +230,6 @@
                     dense
                     color="secondary"
                     label="ชื่อเล่น"
-                    :rules="[(val) => !!val || 'กรุณากรอกชื่อเล่นนักเรียน']"
                   />
                 </div>
                 <div class="col-sm-1">
@@ -252,9 +246,6 @@
                     v-model="student.birth_date"
                     color="teal"
                     type="date"
-                    :rules="[
-                      (val) => !!val || 'กรุณากรอกวันเดือนปีเกิดนักเรียน',
-                    ]"
                   />
                 </div>
               </div>
@@ -280,6 +271,121 @@
                 </div>
               </div>
             </q-tab-panel>
+
+            <q-tab-panel name="more">
+              <div class="row q-gutter-sm justify-around q-mt-sm">
+                <div class="col-sm-6 q-pl-lg flex">
+                  <q-file
+                    outlined
+                    color="teal"
+                    dense
+                    v-model="imageFile.student"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="image" />
+                    </template>
+                  </q-file>
+                  <p class="text-center q-pt-sm q-ml-sm">รูปภาพของนักเรียน</p>
+                </div>
+                <div class="col-sm-5 flex justify-end items-center">
+                  <q-select
+                    v-model="selectPr"
+                    :options="options"
+                    color="teal"
+                    @update:model-value="test"
+                    label="เลือกผู้ปกครอง"
+                    style="width: 250px"
+                  />
+                </div>
+                <div class="col-sm-11">
+                  <q-radio
+                    keep-color
+                    v-model="student.gender"
+                    :val="true"
+                    label="เด็กชาย"
+                    color="teal"
+                  />
+                  <q-radio
+                    keep-color
+                    v-model="student.gender"
+                    :val="false"
+                    label="เด็กหญิง"
+                    color="pink"
+                  />
+                </div>
+                <div class="col-sm-5">
+                  <label for="">ชื่อจริง:</label>
+                  <q-input
+                    v-model="student.first_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="ชื่อจริง"
+                  />
+                </div>
+                <div class="col-sm-5">
+                  <label for="">นามสกุลจริง:</label>
+
+                  <q-input
+                    v-model="student.last_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="นามสกุล"
+                  />
+                </div>
+              </div>
+              <div class="row items-center q-gutter-md justify-center q-mt-sm">
+                <div class="col-sm-3">
+                  <label for="">ชื่อเล่น:</label>
+
+                  <q-input
+                    v-model="student.nick_name"
+                    outlined
+                    dense
+                    color="secondary"
+                    label="ชื่อเล่น"
+                  />
+                </div>
+                <div class="col-sm-1">
+                  <q-input v-model="old.student" label="อายุ" disable></q-input>
+                </div>
+                <div class="col-sm-1 q-mr-md q-pt-lg">
+                  <p class="text-h6">ขวบ</p>
+                </div>
+                <div class="col-sm-5">
+                  <label for="">วัน/เดือน/ปี เกิด:</label>
+
+                  <q-input
+                    @blur="getYear()"
+                    v-model="student.birth_date"
+                    color="teal"
+                    type="date"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="flex justify-end q-gutter-sm items-center q-mt-md q-mr-lg"
+              >
+                <div class="">
+                  <q-btn
+                    @click="addParent"
+                    class="text-secondary q-mr-sm"
+                    outline
+                    rounded
+                    label="บันทึก"
+                  ></q-btn>
+                  <q-btn
+                    class="text-warning"
+                    @click="clear(), (tab = 'mails'), alertWarning()"
+                    outline
+                    rounded
+                    label="ยกเลิก"
+                  ></q-btn>
+                </div>
+              </div>
+            </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>
@@ -289,25 +395,30 @@
 
 <script setup>
 import { biArrowBarRight } from "@quasar/extras/bootstrap-icons";
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { alertShow } from "src/composable/alertShow";
 import { useAuthenStore } from "src/stores/authen";
 import { StudentApi } from "src/api/StudentApi";
 import { ParentApi } from "src/api/ParentApi";
 import { FileApi } from "src/api/FileApi";
+import { teacherKey } from "src/boot/utils/config";
 import { ManageApi } from "src/api/ManageParent";
 import { useRouter } from "vue-router";
-import { Loading, QSpinnerGears } from "quasar";
+import { Loading, QSpinnerGears, LocalStorage } from "quasar";
+const selectPr = ref("เลือกผู้ปกครองของนักเรียน");
+const listOption = ref([]);
+const room = LocalStorage.getItem(teacherKey);
 const authenStore = useAuthenStore();
-const { alertSuccess, alertWarning } = alertShow();
+const { alertSuccess, alertWarning, alertDanger } = alertShow();
 const { uploadImageApi } = FileApi();
 const { createStudent } = StudentApi();
 const lastParentId = ref([]);
 const lastStudentId = ref([]);
 const { addManage } = ManageApi();
-const { createParent } = ParentApi();
+const { createParent, selectParents } = ParentApi();
 const router = useRouter();
-
+const parentId = ref();
+const options = [];
 const imageFile = ref({
   parent: "",
   student: "",
@@ -331,6 +442,7 @@ old.value.student = "";
 old.value.parent = "";
 
 const student = ref({
+  special: "",
   first_name: "",
   last_name: "",
   nick_name: "",
@@ -338,6 +450,8 @@ const student = ref({
   img_file: "",
   teacher_id: "",
   gender: "",
+  room: "",
+  status: true,
 });
 const parent = ref({
   first_name: "",
@@ -351,26 +465,8 @@ const parent = ref({
   img_file: "",
 });
 
-const studentReset = ref({
-  first_name: "",
-  last_name: "",
-  nick_name: "",
-  birth_date: "",
-  img_file: "",
-  gender: "",
-});
-const clear = () => {
-  old.value.parent = "";
-  old.value.student = "";
-
-  Object.assign(student.value, studentReset.value);
-  Object.assign(parent.value, parentReset.value);
-  Object.assign(imageFile.value, imageReset.value);
-};
 const year = ref("");
-
 const tab = ref("mails");
-
 const getYear = () => {
   const date = new Date();
 
@@ -397,164 +493,117 @@ const getYear = () => {
     }
   }
 };
-const addMore = async () => {
-  for (const [items, key] of Object.entries(parent.value)) {
-    console.log(typeof items);
-    if (items == "") {
-      console.log("empty");
-      invalid.value = false;
-    } else {
-      console.log("notempty");
+const addParent = async () => {
+  if (parentId.value) {
+    student.value.room = room;
+    student.value.teacher_id = authenStore.auth;
+    const response = await createStudent(student.value);
+    if (response && response.entity) {
+      lastStudentId.value = response.entity.id;
+    }
 
-      invalid.value = true;
-    }
-  }
-  Loading.show({
-    spinner: QSpinnerGears,
-  });
-  if (imageFile.value.parent) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.parent);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      parent.value.img_file = fileNameResponse.imageName;
-    }
-  }
-  if (imageFile.value.student) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.student);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      student.value.img_file = fileNameResponse.imageName;
-    }
-  }
-  if (invalid.value === true) {
-    const responseParent = await createParent({
-      first_name: parent.value.first_name,
-      last_name: parent.value.last_name,
-      nick_name: parent.value.nick_name,
-      birth_date: parent.value.birth_date,
-      email: parent.value.email,
-      ocupation: parent.value.ocupation,
-      phone: parent.value.phone,
-      zip_code: parent.value.zip_code,
-      img_file: parent.value.img_file,
-    });
-    if (responseParent) {
-      responseParent.entity.forEach((element) => {
-        if (element) {
-          // console.log(element);
-        }
-        // lastParentId.value = element.id;
+    if (parentId.value) {
+      const addToManage = await addManage({
+        students_id: lastStudentId.value,
+        parent_id: parentId.value,
       });
     }
+    await alertSuccess(
+      "เพิ่มข้อมูลนักเรียนสำเร็จ",
+      `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
+    );
+    student.value = {};
   } else {
-    alertWarning();
+    alertDanger(
+      "สมัครรับข้อมูลไม่สำเร็จ",
+      "ไม่สามารถสมัครรับข้อมูลกรุณาตรวจสอบข้อมูลให้ครบถ้วน"
+    );
   }
-
-  const response = await createStudent({
-    special: "",
-    first_name: student.value.first_name,
-    last_name: student.value.last_name,
-    nick_name: student.value.nick_name,
-    birth_date: student.value.birth_date,
-    img_file: student.value.img_file,
-
-    status: true,
-    gender: student.value.gender,
-  });
-  if (response) {
-    response.entity.forEach((element) => {
-      if (!element) {
-        // console.log(element);
-      }
-      // lastStudentId.value = element.id;
-    });
-  }
-
-  if (lastParentId.value && lastStudentId.value) {
-    const addToManage = await addManage({
-      students_id: lastStudentId.value,
-      parent_id: lastParentId.value,
-    });
-  } else {
-    alertWarning();
-  }
-
-  Loading.hide();
-  Object.assign(old.value.student, (old.value.student = ""));
-  Object.assign(student.value, studentReset.value);
-  Object.assign(imageFile.value, imageReset.value);
 };
 
 const create = async () => {
-  Loading.show({
-    spinner: QSpinnerGears,
-  });
-  if (imageFile.value.parent) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.parent);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      parent.value.img_file = fileNameResponse.imageName;
-    }
-  }
-  if (imageFile.value.student) {
-    const fileNameResponse = await uploadImageApi(imageFile.value.student);
-    console.log("uploadImageApi", fileNameResponse);
-    if (fileNameResponse && fileNameResponse.imageName) {
-      student.value.img_file = fileNameResponse.imageName;
-    }
-  }
-
-  if (lastParentId.value == "") {
-    const responseParent = await createParent({
-      first_name: parent.value.first_name,
-      last_name: parent.value.last_name,
-      nick_name: parent.value.nick_name,
-      birth_date: parent.value.birth_date,
-      email: parent.value.email,
-      ocupation: parent.value.ocupation,
-      phone: parent.value.phone,
-      zip_code: parent.value.zip_code,
-      img_file: parent.value.img_file,
+  if (
+    student.value.first_name != "" ||
+    student.value.last_name != "" ||
+    student.value.nick_name != "" ||
+    parent.value.first_name != "" ||
+    parent.value.last_name != "" ||
+    parent.value.nick_name != "" ||
+    parent.value.ocupation != "" ||
+    parent.value.birth_date != "" ||
+    student.value.birth_date != ""
+  ) {
+    student.value.room = room;
+    student.value.teacher_id = authenStore.auth;
+    Loading.show({
+      spinner: QSpinnerGears,
     });
+    if (imageFile.value.parent) {
+      const fileNameResponse = await uploadImageApi(imageFile.value.parent);
+      console.log("uploadImageApi", fileNameResponse);
+      if (fileNameResponse && fileNameResponse.imageName) {
+        parent.value.img_file = fileNameResponse.imageName;
+      }
+    }
+    if (imageFile.value.student) {
+      const fileNameResponse = await uploadImageApi(imageFile.value.student);
+      console.log("uploadImageApi", fileNameResponse);
+      if (fileNameResponse && fileNameResponse.imageName) {
+        student.value.img_file = fileNameResponse.imageName;
+      }
+    }
+
+    const responseParent = await createParent(parent.value);
     responseParent.entity.forEach((items) => {
       lastParentId.value = items.id;
+      console.log(responseParent);
     });
-  }
 
-  const response = await createStudent({
-    special: "",
-    first_name: student.value.first_name,
-    last_name: student.value.last_name,
-    nick_name: student.value.nick_name,
-    birth_date: student.value.birth_date,
-    img_file: student.value.img_file,
-    status: true,
-    teacher_id: authenStore.auth,
-    gender: student.value.gender,
-  });
-  console.log(response);
-  response.entity.forEach((items) => {
-    console.log(items);
-    lastStudentId.value = items.id;
-  });
+    const response = await createStudent(student.value);
+    console.log(response);
+    if (response && response.entity) {
+      lastStudentId.value = response.entity.id;
+    }
 
-  if (lastParentId.value != 0 && lastStudentId.value != 0) {
     const addToManage = await addManage({
       students_id: lastStudentId.value,
       parent_id: lastParentId.value,
     });
-    // console.log(addToManage);
-  } else {
-    alertWarning();
-  }
-  Loading.hide();
-  await alertSuccess(
-    "สมัครข้อมูลนักเรียนสำเร็จ",
-    `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
-  );
+    console.log(addToManage);
 
-  router.push("/list");
+    Loading.hide();
+    await alertSuccess(
+      "สมัครข้อมูลนักเรียนสำเร็จ",
+      `ข้อมูลนักเรียนล่าสุดได้ถูกเพิ่มแล้ว`
+    );
+
+    router.push("/list");
+  } else {
+    alertDanger(
+      "สมัครรับข้อมูลไม่สำเร็จ",
+      "ไม่สามารถสมัครรับข้อมูลกรุณาตรวจสอบข้อมูลให้ครบถ้วน"
+    );
+  }
 };
+const listSelect = async () => {
+  const response = await selectParents();
+  if (response) {
+    listOption.value = response.entity;
+    listOption.value.forEach((items) => {
+      options.push({
+        label: items.first_name + " " + items.last_name,
+        values: items.id,
+      });
+    });
+  }
+};
+const test = (val) => {
+  console.log(val.values);
+  parentId.value = val.values;
+};
+onMounted(() => {
+  listSelect();
+});
 </script>
 
 <style lang="scss" scoped></style>

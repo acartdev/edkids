@@ -1,16 +1,12 @@
 <template>
   <q-page class="row justify-center">
-    <q-list v-if="check" class="col-sm-9 q-gutter-md">
+    <q-list v-if="check" class="col-sm-9 col-12 q-gutter-md">
       <template class="flex justify-between">
         <q-item-label header class="text-h5">รายชื่อนักเรียน</q-item-label>
         <q-input
           v-model="search"
           @focus="listAll()"
-          @blur="
-            search.length > 0
-              ? ((currentPage = 0), (recordPerPage = 0))
-              : ((currentPage = 1), (recordPerPage = 4))
-          "
+          @blur="defaultPage"
           placeholder="กรอกรหัสนักเรียน หรือ ชื่อ"
           color="teal"
           label="ค้นหา"
@@ -58,23 +54,16 @@
 import { ref, onMounted, watch, onUnmounted, onUpdated } from "vue";
 import { StudentApi } from "src/api/StudentApi";
 import ListStudents from "src/components/ListStudents.vue";
-import { useAuthenStore } from "src/stores/authen";
 import { LocalStorage } from "quasar";
-import { teacherApi } from "src/api/Teacher";
 import { Loading, QSpinnerGears } from "quasar";
-import { AuthenApi } from "src/api/AuthenApi";
 import { computed } from "vue";
 import { teacherKey } from "src/boot/utils/config";
-
 const { getStudentList } = StudentApi();
-
 const check = ref();
 const search = ref("");
 const forSearch = ref([]);
-
 const currentPage = ref(1);
 const data = ref([]);
-
 const id = LocalStorage.getItem(teacherKey);
 const recordPerPage = ref(4);
 const totalPage = ref(0);
@@ -82,7 +71,12 @@ const listAll = () => {
   currentPage.value = 0;
   recordPerPage.value = 0;
 };
-
+const defaultPage = () => {
+  setTimeout(() => {
+    currentPage.value = 1;
+    recordPerPage.value = 4;
+  }, 300);
+};
 const getvar = (value) => {
   data.value.splice(value, 1);
 };
