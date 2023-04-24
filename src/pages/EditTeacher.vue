@@ -59,7 +59,7 @@
           </div>
         </q-card-section>
         <q-card-section align="right">
-          <q-btn to="/admin" label="ยกเลิก"> </q-btn>
+          <q-btn to="/" label="ยกเลิก"> </q-btn>
           <q-btn
             label="แก้ไข"
             @click="updateProcess()"
@@ -146,7 +146,7 @@ const updateProcess = async () => {
       "ท่านได้ทำการแก้ไขข้อมูลส่วนตัวสำเร็จ"
     );
     setTimeout(() => {
-      router.push("/admin");
+      window.location.replace("/");
     }, 500);
   }
 };

@@ -495,6 +495,13 @@ const getYear = () => {
 };
 const addParent = async () => {
   if (parentId.value) {
+    if (imageFile.value.student) {
+      const fileNameResponse = await uploadImageApi(imageFile.value.student);
+      console.log("uploadImageApi", fileNameResponse);
+      if (fileNameResponse && fileNameResponse.imageName) {
+        student.value.img_file = fileNameResponse.imageName;
+      }
+    }
     student.value.room = room;
     student.value.teacher_id = authenStore.auth;
     const response = await createStudent(student.value);

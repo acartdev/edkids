@@ -1,6 +1,6 @@
 const routes = [
   {
-    path: "/",
+    path: "/login",
     component: () => import("layouts/LoginForm.vue"),
 
     children: [
@@ -11,7 +11,7 @@ const routes = [
     ],
   },
   {
-    path: "/admin",
+    path: "/",
     component: () => import("layouts/MainLayout.vue"),
     meta: { requireAuth: true },
     children: [

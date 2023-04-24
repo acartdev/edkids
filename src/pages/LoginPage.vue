@@ -152,13 +152,15 @@ const teacherLogin = async () => {
   console.log(response.status);
 
   if (response && response.userData) {
-    teacherData.value = response.userData;
-    authenStore.setAuthen(teacherData.value);
+    if (response.userData.teacher_id) {
+      teacherData.value = response.userData;
+      authenStore.setAuthen(teacherData.value);
+      alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
+      setTimeout(() => {
+        window.location.replace("/");
+      }, 800);
+    }
     // console.log(teacherData.value);
-    alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
-    setTimeout(() => {
-      window.location.replace("#/admin");
-    }, 800);
   } else if (response.status != true) {
     alertDanger(
       "เข้าสู่ระบบไม่สำเร็จ",
@@ -166,13 +168,6 @@ const teacherLogin = async () => {
     );
   }
 };
-const studentLogin = async () => {
-  const stdResponse = await loginProcess({
-    _u: email.value,
-    _p: password.value,
-  });
-};
-
 // user login part
 
 const userSubmit = async () => {

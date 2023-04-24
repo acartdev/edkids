@@ -195,7 +195,7 @@ const linksList = ref([
   {
     title: "หน้าแรก",
     icon: "home",
-    link: "/admin",
+    link: "/",
   },
   {
     title: "รายชื่อนักเรียน",
