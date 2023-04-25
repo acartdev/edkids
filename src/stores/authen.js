@@ -23,11 +23,12 @@ export const useAuthenStore = defineStore("authenStore", {
       }
 
       this.auth = userData.teacher_id;
-      // console.log(this.auth);
+      console.log(this.auth);
     },
     logout() {
       this.auth = undefined;
       LocalStorage.remove(teacherKey);
+      LocalStorage.remove(studentKey);
       LocalStorage.remove(authenKey);
     },
   },

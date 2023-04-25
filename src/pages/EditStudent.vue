@@ -70,7 +70,8 @@ const { getParentList } = ParentApi();
 const { readSingle } = StudentApi();
 const router = useRoute();
 const parentEntity = ref([]);
-const show = ref(true);
+const meta = ref(true);
+
 const student = ref({});
 const action = ref();
 const findParentId = ref();
@@ -93,10 +94,12 @@ onMounted(async () => {
     getId.value = router.params.id;
   }
   if (action.value === "list") {
+    meta.value = true;
     await fetchStudentOne(getId.value);
     await fetchStudent(findParentId.value);
     await fetchParent(getId.value);
   } else if (action.value === "edit") {
+    meta.value = false;
     await fetchParent(getId.value);
     await fetchStudentOne(getId.value);
     for (let i = 0; i < studentEntity.value.length; i++) {
@@ -110,9 +113,9 @@ onMounted(async () => {
 });
 useMeta({
   title:
-    action.value == "edit"
-      ? "แก้ไขรายชื่อนักเรียน"
-      : "ข้อมูลทั้งหมดของนักเรียน",
+    router.params.action == "list"
+      ? "ข้อมูลทั้งหมดของนักเรียน"
+      : "แก้ไขข้อมูลนักเรียน",
 });
 const fetchStudent = async (id) => {
   const response = await getListParent(id);

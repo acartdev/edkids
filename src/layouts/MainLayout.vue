@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="q-py-sm shadow-3" :class="bgColor">
-      <q-toolbar>
+      <q-toolbar class="flex justify-between">
         <q-btn
           style="color: #1e293b"
           class="text-h6"
@@ -12,8 +12,6 @@
           aria-label="Menu"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
-
-        <q-toolbar-title class="text-right"> </q-toolbar-title>
 
         <div class="flex items-center justify-end">
           <div class="text-right text-subtitle1 no-padding">
@@ -170,6 +168,7 @@ const getUserProcess = async () => {
   const response = await getUserDataByAuth();
   if (response && response.userData) {
     authenStore.setAuthen(response.userData);
+    console.log(response.userData);
   }
   getUser();
 };

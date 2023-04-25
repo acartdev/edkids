@@ -1,12 +1,10 @@
 <template>
-  <q-page class="fit">
-    <div class="row justify-center" style="height: 620px">
-      <div class="col-sm-10">
+  <q-page class="q-mb-xl">
+    <div class="row justify-center">
+      <div class="col-11 col-sm-6">
         <!-- post reload -->
 
-        <div @scroll="handleScroll" style="overflow-y: scroll; height: 90vh">
-          <post v-for="item in entityItem" :key="item" v-bind="item" />
-        </div>
+        <post v-for="item in entityItem" :key="item" v-bind="item" />
 
         <q-spinner
           v-if="loading == true"
@@ -16,7 +14,7 @@
         />
 
         <div
-          class="text-h5 text-center q-pa-xl text-secondary absolute-center"
+          class="text-h6 text-center text-secondary absolute-center"
           v-if="entityItem == ''"
           style="background-color: whitesmoke; border-radius: 4px"
         >
@@ -52,7 +50,16 @@ const fetchData = async () => {
 
   loading.value = false;
 };
-const post = defineAsyncComponent(() => import("../components/PostRoom.vue"));
+const post = defineAsyncComponent(() =>
+  import("../../components/PostRoom.vue")
+);
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+body.screen--lg {
+  .q-page {
+    padding: 0;
+    margin: 0;
+  }
+}
+</style>

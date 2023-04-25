@@ -13,7 +13,7 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    meta: { requireAuth: true },
+    meta: { requireAdmin: true },
 
     children: [
       { path: "", component: () => import("pages/IndexPage.vue") },
@@ -49,15 +49,21 @@ const routes = [
     component: () => import("layouts/UserLayout.vue"),
     meta: { requireAuth: true },
     children: [
-      { path: "/homePage", component: () => import("pages/UserPage.vue") },
-      { path: "/postList", component: () => import("pages/PostPage.vue") },
       {
-        path: "/conductList",
-        component: () => import("pages/ConductPage.vue"),
+        path: "/homePage",
+        component: () => import("pages/Student/UserPage.vue"),
       },
       {
-        path: "/teacherInfo",
-        component: () => import("pages/TeacherPage.vue"),
+        path: "/post-list",
+        component: () => import("pages/Student/PostPage.vue"),
+      },
+      {
+        path: "/conduct-list",
+        component: () => import("pages/Student/ConductPage.vue"),
+      },
+      {
+        path: "/teacher-info",
+        component: () => import("pages/Student/TeacherPage.vue"),
       },
     ],
   },

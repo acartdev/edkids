@@ -4,8 +4,8 @@
       <q-img width="150px" src="../assets/logo_edkids.png"></q-img>
     </div>
   </div>
-  <div class="row q-mt-sm justify-start q-pl-lg">
-    <div class="col-sm-5">
+  <div class="row q-mt-sm justify-start q-pl-lg tab">
+    <div class="col-sm-5 col-5">
       <q-tabs v-model="tab" indicator-color="white" class="text-teal">
         <q-tab class="q-px-sm" name="mails" label="นักเรียน" />
         <q-tab class="q-px-sm" name="alarms" label="คุณครู" />
@@ -19,7 +19,7 @@
         <q-tab-panels class="transparent no-padding fit" v-model="tab" animated>
           <q-tab-panel name="mails">
             <div class="row fit justify-center">
-              <div class="col-sm-11">
+              <div class="col-sm-11 col-7">
                 <q-input
                   dark
                   v-model="stdCode"
@@ -29,7 +29,7 @@
                   label="รหัสนักศึกษา"
                 ></q-input>
               </div>
-              <div class="col-sm-11">
+              <div class="col-sm-11 col-7">
                 <q-input
                   label="วัน/เดือน/ปี เกิด"
                   mask="##/##/####"
@@ -47,7 +47,7 @@
           </q-tab-panel>
           <q-tab-panel name="alarms">
             <div class="row fit justify-center">
-              <div class="col-sm-11">
+              <div class="col-sm-11 col-7">
                 <q-input
                   v-model="email"
                   dark
@@ -57,7 +57,7 @@
                   :rules="[emailInvalid]"
                 ></q-input>
               </div>
-              <div class="col-sm-11">
+              <div class="col-sm-11 col-7">
                 <q-input
                   v-model="password"
                   :rules="[passwordInvalid]"
@@ -155,6 +155,7 @@ const teacherLogin = async () => {
     if (response.userData.teacher_id) {
       teacherData.value = response.userData;
       authenStore.setAuthen(teacherData.value);
+
       alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
       setTimeout(() => {
         window.location.replace("/");
@@ -202,4 +203,10 @@ const userSubmit = async () => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+body.screen--xs {
+  .tab {
+    margin-left: 4rem;
+  }
+}
+</style>

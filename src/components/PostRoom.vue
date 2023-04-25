@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-a-md q-mb-md">
+  <q-card class="q-mb-md">
     <q-card-section>
       <div class="flex">
         <q-avatar size="80px">
@@ -21,9 +21,9 @@
 
     <q-separator />
 
-    <q-card-section class="q-pa-xs">
+    <q-card-section class="q-py-none">
       <p
-        class="no-margin q-px-xl q-py-md"
+        class="no-margin no-padding"
         :class="checkImage.length <= 0 ? 'text-h5' : 'text-h6'"
       >
         {{ post?.msg }}
@@ -31,41 +31,49 @@
     </q-card-section>
 
     <q-card-section>
-      <q-carousel
-        v-if="checkImage.length > 0"
-        v-model="slide"
-        transition-prev="jump-right"
-        transition-next="jump-left"
-        swipeable
-        animated
-        control-color="teal"
-        prev-icon="arrow_left"
-        next-icon="arrow_right"
-        navigation-icon="radio_button_unchecked"
-        navigation
-        padding
-        arrows
-        height="400px"
-        class="fit rounded-borders"
-      >
-        <q-carousel-slide
-          class="column fit no-wrap flex-center"
-          v-for="(item, index) in image"
-          :key="index"
-          :name="index"
+      <q-responsive :ratio="16 / 9" style="max-width: 100%">
+        <q-carousel
+          v-if="checkImage.length > 0"
+          v-model="slide"
+          transition-prev="jump-right"
+          transition-next="jump-left"
+          swipeable
+          animated
+          control-color="teal"
+          prev-icon="arrow_left"
+          next-icon="arrow_right"
+          navigation-icon="radio_button_unchecked"
+          navigation
+          padding
+          arrows
+          height="400px"
+          class="fit rounded-borders"
         >
-          <div class="row fit">
-            <q-responsive :ratio="16 / 9" class="col">
-              <q-img :src="item"></q-img>
-            </q-responsive>
-          </div>
+          <q-carousel-slide
+            v-for="(img, index) in image"
+            :key="index"
+            :name="index"
+            :img-src="img"
+          />
+          <!-- <q-carousel-slide
+            class="column fit no-wrap flex-center"
+            v-for="(item, index) in image"
+            :key="index"
+            :name="index"
+          > -->
+          <!-- <div class="row fit">
+
+                <q-img :src="item"></q-img>
+
+            </div> -->
 
           <!-- <q-icon name="terrain" size="56px" />
           <div class="q-mt-md text-center">
             {{ lorem }}
           </div> -->
-        </q-carousel-slide>
-      </q-carousel>
+          <!-- </q-carousel-slide> -->
+        </q-carousel>
+      </q-responsive>
     </q-card-section>
   </q-card>
 </template>

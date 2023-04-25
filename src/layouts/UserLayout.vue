@@ -1,98 +1,103 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="transparent">
-      <q-btn
-        class="text-weight-bold text-h6"
-        color="blue-grey-10"
-        flat
-        dense
-        round
-        icon="menu"
-        aria-label="Menu"
-        @click="leftDrawerOpen = !leftDrawerOpen"
-      />
+      <q-toolbar class="bg-teal q-py-md z-max">
+        <div class="row justify-end fit items-center">
+          <div class="col-6 col-md-2">
+            <div class="flex justify-around items-center">
+              <p>
+                {{ entityItem.gender ? "เด็กชาย" : "เด็กหญิง" }}
+                {{ entityItem.first_name + " " + entityItem.last_name }} <br />
+                เตรียมอนุบาลห้อง {{ entityItem.room }}
+              </p>
+
+              <q-avatar class="q-ml-xs" size="50px">
+                <img :src="entityItem.image?.thumbnail" alt="" />
+                <q-menu>
+                  <q-list>
+                    <q-item class="no-padding no-margin">
+                      <q-item-section class="q-px-xs q-py-sm">
+                        <q-btn
+                          dense=""
+                          flat=""
+                          label="ออกจากระบบ"
+                          @click="logoutProcess()"
+                          class="text-caption no-margin text-center"
+                          icon-right="logout"
+                          text-color="negative"
+                        ></q-btn
+                      ></q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-avatar>
+            </div>
+          </div>
+        </div>
+      </q-toolbar>
     </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <div class="flex justify-center q-pt-md column items-center">
-          <q-img
-            :src="entityItem.image?.thumbnail"
-            width="150px"
-            height="150px"
-            style="border-radius: 50%"
-          />
-          <p class="text-h6 q-pt-md no-margin text-green-12">
-            น้อง {{ entityItem.nick_name }}
-          </p>
-          <p class="no-margin text-white">
-            เตรียมอนุบาล ห้อง {{ entityItem.room }}
-          </p>
-        </div>
-        <div class="q-pt-xl q-px-lg">
-          <!-- <essential-link v-for="i in linksList" :key="i" v-bind="i" /> -->
-          <menu-user-link v-for="i in linksList" :key="i" v-bind="i" />
-
-          <!-- logout -->
-
-          <q-item
-            clickable
-            @click="logoutConfirm"
-            style="font-size: 23px; border-bottom: 2px solid #42d293"
-          >
-            <q-item-section>
-              <q-item-label class="text-right text-red"
-                >ออกจากระบบ</q-item-label
-              >
-            </q-item-section>
-            <q-item-section avatar>
-              <q-icon class="text-red" name="logout" />
-            </q-item-section>
-          </q-item>
-        </div>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      :width="70"
+      :breakpoint="900"
+      elevated
+      class="text-teal flex flex-column items-center justify-around"
+      style="background-color: #1e293b"
+    >
+      <q-list class="">
+        <q-item
+          class="q-my-xl"
+          v-for="items in linksList"
+          :key="items"
+          :to="items.link"
+          ><q-icon size="30px" :name="items.icon"></q-icon>
+        </q-item>
       </q-list>
     </q-drawer>
-
     <q-page-container class="fit">
-      <div class="circle"></div>
-
       <router-view v-slot="{ Component }">
         <transition name="slide-fade">
           <component :is="Component" />
         </transition>
       </router-view>
     </q-page-container>
+    <q-tabs v-model="tab" class="fixed-bottom bg-white" dense align="justify">
+      <q-route-tab
+        exact
+        v-for="menu in linksList"
+        :key="menu"
+        :to="menu.link"
+        class="text-teal"
+        :name="menu.names"
+        :icon="menu.icon"
+        :label="menu.title"
+      />
+    </q-tabs>
   </q-layout>
 </template>
 
 <script setup>
-import MenuUserLink from "components/MenuUserLink.vue";
-import { defineComponent, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { LocalStorage, useMeta, useQuasar } from "quasar";
-import { useRoute } from "vue-router";
-
+import { useRoute, useRouter } from "vue-router";
 import { StudentApi } from "src/api/StudentApi";
 import { studentKey } from "src/boot/utils/config";
 import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
-
+import MenuUserLink from "src/components/MenuUserLink.vue";
 // import { biGear, biPencil } from "@quasar/extras/bootstrap-icons";
-
-const route = useRoute();
+const route = useRouter();
 const leftDrawerOpen = ref(false);
 const id = localStorage.getItem(studentKey);
 const studentId = ref(id);
 const { getOne } = StudentApi();
 const entityItem = ref({});
-
 const { userLogout } = AuthenApi();
 const $q = useQuasar();
 const authenStore = useAuthenStore();
 
 onMounted(() => {
-  if (route.params.studentId) {
-    studentId.value = route.params.studentId;
-  }
   fetchData();
 });
 
@@ -111,24 +116,28 @@ const linksList = [
     icon: "home",
     link: "/homePage/",
     color: "text-white",
+    names: "home",
   },
   {
     title: "โพสต์",
     icon: "perm_media",
-    link: "/postList",
+    link: "/post-list",
     color: "text-white",
+    names: "post",
   },
   {
     title: "ความประพฤติ",
     icon: "self_improvement",
-    link: "/conductList",
+    link: "/conduct-list",
     color: "text-white",
+    names: "conduct",
   },
   {
     title: "ครูผู้สอน",
     icon: "account_circle",
-    link: "/teacherInfo",
+    link: "/teacher-info",
     color: "text-white",
+    names: "teacher",
   },
   // {
   //   title: "ออกจากระบบ",
@@ -182,36 +191,28 @@ const logoutProcess = async () => {
 };
 </script>
 
-<style>
-.circle {
-  width: 350px;
-  height: 350px;
-  background: #60f4a0;
-  clip-path: circle(50% at right 25% top 25%);
-  position: absolute;
-  right: 0;
-  top: -10px;
-}
-.q-layout {
-  background: #e5e5e5;
-}
-.q-drawer {
-  background: #1e293b;
-  border-top-right-radius: 25px;
-  border-bottom-right-radius: 25px;
+<style lang="scss">
+* p {
+  padding: 0;
+  margin: 0;
 }
 
-.slide-fade-enter-active {
-  transition: all 0.8s ease-out;
+body.screen--lg {
+  .q-tabs {
+    display: none;
+  }
+}
+.q-layout {
+  background: #f5f5f5;
 }
 
 .slide-fade-leave-active {
-  transition: all 0.4s ease-in;
+  transition: all 0.2s ease-in;
 }
 
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateY(40px);
-  opacity: 0;
+  transform: translatex(-40px);
+  opacity: 0.5;
 }
 </style>

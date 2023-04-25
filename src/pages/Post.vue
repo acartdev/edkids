@@ -36,7 +36,6 @@ import { Loading, QSpinnerGears, useMeta } from "quasar";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 useMeta({ title: "โพสต์กิจจกรรม" });
-
 const $q = useQuasar();
 const router = useRouter();
 const { alertSuccess, alertWarning } = alertShow();

@@ -1,10 +1,20 @@
 <template>
   <!-- <tbody> -->
   <tr>
-    <td class="text-center">{{ res.date }}</td>
-    <td class="text-center">{{ res.nick_name }}</td>
-    <td class="text-center">{{ res.first_name + " " + res.last_name }}</td>
-    <td class="text-center">{{ res.result }}</td>
+    <td class="text-left">{{ res.date }}</td>
+
+    <td class="text-left">{{ res.first_name + " " + res.last_name }}</td>
+    <td class="text-center">
+      {{
+        res.result == "good"
+          ? "ดี"
+          : "" || res.result == "very_good"
+          ? "ดีมาก"
+          : "" || res.result == "bad"
+          ? "ดื้อ"
+          : ""
+      }}
+    </td>
     <td class="text-center">
       {{ res.note != "" ? res.note : "-" }}
     </td>
@@ -25,4 +35,10 @@ const res = defineProps({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+</style>
