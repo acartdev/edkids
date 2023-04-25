@@ -21,7 +21,7 @@
 
     <q-separator />
 
-    <q-card-section class="q-py-none">
+    <q-card-section :class="checkImage.length > 0 ? 'q-py-none' : 'q-py-md'">
       <p
         class="no-margin no-padding"
         :class="checkImage.length <= 0 ? 'text-h5' : 'text-h6'"
@@ -30,21 +30,16 @@
       </p>
     </q-card-section>
 
-    <q-card-section>
+    <q-card-section v-if="checkImage.length > 0">
       <q-responsive :ratio="16 / 9" style="max-width: 100%">
         <q-carousel
-          v-if="checkImage.length > 0"
           v-model="slide"
           transition-prev="jump-right"
           transition-next="jump-left"
-          swipeable
           animated
-          control-color="teal"
-          prev-icon="arrow_left"
-          next-icon="arrow_right"
-          navigation-icon="radio_button_unchecked"
-          navigation
-          padding
+          control-color="white"
+          prev-icon="arrow_back_ios"
+          next-icon="arrow_forward_ios"
           arrows
           height="400px"
           class="fit rounded-borders"

@@ -108,7 +108,10 @@
               <chart-conduct :point="conductEntityItem" />
             </div>
             <div v-else class="col-12 text-center q-py-md">
-              <p>ไม่พบข้อมูบการให้คะแนน</p>
+              <p>
+                ไม่พบข้อมูลการให้คะแนน
+                <q-icon name="close" color="red"></q-icon>
+              </p>
             </div>
           </div>
         </div>
@@ -329,7 +332,9 @@
               <chart-conduct :point="conductEntityItem" />
             </div>
             <div v-else class="col-12 q-py-md">
-              <p class="text-center">ไม่พบข้อมูบการให้คะแนน</p>
+              <p class="text-center">
+                ไม่พบข้อมูลการให้คะแนน<q-icon name="close" color="red"></q-icon>
+              </p>
             </div>
           </div>
         </div>
