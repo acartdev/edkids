@@ -109,11 +109,11 @@
 
 <script setup>
 import { ref } from "vue";
-import { Loading, QSpinnerGears, useQuasar } from "quasar";
+import { Loading, QSpinnerGears, useMeta } from "quasar";
 import { AuthenApi } from "src/api/AuthenApi";
 import { alertShow } from "src/composable/alertShow";
 import { useAuthenStore } from "src/stores/authen";
-
+useMeta({ title: "Login" });
 const { alertDanger, alertSuccess } = alertShow();
 const { loginProcess } = AuthenApi();
 

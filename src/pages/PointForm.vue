@@ -30,10 +30,12 @@
 import FormPoint from "src/components/FormPoint.vue";
 import { StudentApi } from "src/api/StudentApi";
 import { teacherKey } from "src/boot/utils/config";
-import { Loading, QSpinnerGears } from "quasar";
+import { Loading, QSpinnerGears, useMeta } from "quasar";
 import { LocalStorage } from "quasar";
 import { useAuthenStore } from "src/stores/authen";
 import { ref, onMounted } from "vue";
+useMeta({ title: "ให้คะแนน" });
+
 const authenStore = useAuthenStore();
 const { getStudentList } = StudentApi();
 const data = ref([]);

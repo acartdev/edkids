@@ -14,9 +14,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { StudentApi } from "src/api/StudentApi";
-import { Loading, QSpinnerGears } from "quasar";
+import { Loading, QSpinnerGears, useMeta } from "quasar";
 import StudentKeep from "src/components/StudentKeep.vue";
 import { useAuthenStore } from "src/stores/authen";
+useMeta({ title: "รายชื่อที่ถูกจัดเก็บ" });
 const authenStore = useAuthenStore();
 const { getStudentList } = StudentApi();
 

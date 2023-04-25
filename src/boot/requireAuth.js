@@ -6,11 +6,10 @@ import { teacherKey } from "src/boot/utils/config";
 export default boot(({ router }) => {
   router.beforeEach((to, from, next) => {
     // console.log("from", from, "to", to);
-    if (to.matched.some((record) => record.meta.requireAuth)) {
-      if (
-        LocalStorage.getItem(authenKey) != null &&
-        LocalStorage.getItem(teacherKey) != null
-      ) {
+    const requiresAuth = to.matched.some((record) => record.meta.requireAuth);
+    // console.log(requiresAuth);
+    if (requiresAuth) {
+      if (LocalStorage.getItem(authenKey) != null) {
         next();
       } else {
         next({

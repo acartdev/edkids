@@ -69,7 +69,8 @@
 import { ref, onMounted, defineAsyncComponent } from "vue";
 import StudentGrad from "src/components/StudentGrad.vue";
 import { StudentApi } from "src/api/StudentApi";
-import { Loading, QSpinnerGears } from "quasar";
+import { Loading, QSpinnerGears, useMeta } from "quasar";
+useMeta({ title: "หน้าแรก" });
 const { listPoint, listYears } = StudentApi();
 const data = ref([]);
 const check = ref();

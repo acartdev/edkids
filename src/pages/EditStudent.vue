@@ -63,6 +63,8 @@ import { useRoute } from "vue-router";
 import { StudentApi } from "src/api/StudentApi";
 import { ParentApi } from "src/api/ParentApi";
 import { ManageApi } from "src/api/ManageParent";
+import { useMeta, Loading, QSpinnerGears } from "quasar";
+
 const { getListParent } = ManageApi();
 const { getParentList } = ParentApi();
 const { readSingle } = StudentApi();
@@ -106,6 +108,12 @@ onMounted(async () => {
     console.log(studentEntity.value);
   }
 });
+useMeta({
+  title:
+    action.value == "edit"
+      ? "แก้ไขรายชื่อนักเรียน"
+      : "ข้อมูลทั้งหมดของนักเรียน",
+});
 const fetchStudent = async (id) => {
   const response = await getListParent(id);
   if (response) {
@@ -143,14 +151,5 @@ const fetchParent = async (id) => {
 .q-img {
   position: relative;
   object-fit: cover;
-}
-.q-img:not(.profile)::after {
-  content: "";
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.5);
 }
 </style>

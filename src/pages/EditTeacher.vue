@@ -98,23 +98,20 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { LocalStorage } from "quasar";
+import { LocalStorage, useMeta } from "quasar";
 import { teacherKey } from "src/boot/utils/config";
 import { teacherApi } from "src/api/Teacher";
 import { alertShow } from "src/composable/alertShow";
 import { FileApi } from "src/api/FileApi";
-import { useRouter } from "vue-router";
+useMeta({ title: "แก้ไขข้อมูลครู" });
 const show = ref(true);
 const { uploadImageApi } = FileApi();
-const { alertSuccess, alertWarning } = alertShow();
+const { alertSuccess } = alertShow();
 const { getTeacher, updateTeacher } = teacherApi();
 const slide = ref(1);
-
 const imageList = ref();
 const teacherData = ref({});
 const teacherId = LocalStorage.getItem(teacherKey);
-const router = useRouter();
-
 const haveImage = ref(false);
 const getInfoTeacher = async () => {
   const response = await getTeacher(teacherId);

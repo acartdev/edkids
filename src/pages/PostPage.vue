@@ -28,27 +28,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, defineAsyncComponent } from "vue";
-import { SocialApi } from "src/api/SocialApi";
-import { useRoute } from "vue-router";
+import { ref, onMounted, defineAsyncComponent } from "vue";
 import { PostApi } from "src/api/PostApi";
 import { teacherKey } from "src/boot/utils/config";
-
-const route = { useRoute };
 const { getPost } = PostApi();
-const { getImagePost } = PostApi();
-
 const id = localStorage.getItem(teacherKey);
 const teacherId = ref(id);
 const entityItem = ref(false);
 const imageId = ref([]);
 const imageEntity = ref([]);
 const loading = ref(false);
-
 onMounted(() => {
   fetchData();
 });
-
 const fetchData = async () => {
   loading.value = true;
   const response = await getPost(teacherId.value);
@@ -60,7 +52,6 @@ const fetchData = async () => {
 
   loading.value = false;
 };
-
 const post = defineAsyncComponent(() => import("../components/PostRoom.vue"));
 </script>
 

@@ -404,7 +404,8 @@ import { FileApi } from "src/api/FileApi";
 import { teacherKey } from "src/boot/utils/config";
 import { ManageApi } from "src/api/ManageParent";
 import { useRouter } from "vue-router";
-import { Loading, QSpinnerGears, LocalStorage } from "quasar";
+import { Loading, QSpinnerGears, LocalStorage, useMeta } from "quasar";
+useMeta({ title: "สมัครเรียน" });
 const selectPr = ref("เลือกผู้ปกครองของนักเรียน");
 const listOption = ref([]);
 const room = LocalStorage.getItem(teacherKey);
@@ -423,11 +424,6 @@ const imageFile = ref({
   parent: "",
   student: "",
 });
-const imageReset = ref({
-  parent: "",
-  student: "",
-});
-
 const old = ref({
   student: {
     type: String,

@@ -14,6 +14,7 @@ const routes = [
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     meta: { requireAuth: true },
+
     children: [
       { path: "", component: () => import("pages/IndexPage.vue") },
       { path: "/list", component: () => import("pages/ListStudent.vue") },
