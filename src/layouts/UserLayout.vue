@@ -1,10 +1,14 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout v-on:scroll="onScroll" view="lHh Lpr lFf">
     <q-header class="transparent">
-      <q-toolbar class="bg-teal q-py-md z-max shadow-20">
+      <q-toolbar
+        class="q-py-sm z-max shadow-20"
+        :class="pad"
+        style="transition: all 0.3s ease"
+      >
         <div class="row justifyt-center fit items-center gt-xs">
           <div class="col-sm-9">
-            <q-breadcrumbs active-color="white">
+            <q-breadcrumbs active-color="">
               <q-breadcrumbs-el label="หน้าหลัก" icon="home" to="/user" />
               <q-breadcrumbs-el
                 label="รายงานกิจกรรม"
@@ -106,15 +110,22 @@ import { StudentApi } from "src/api/StudentApi";
 import { studentKey } from "src/boot/utils/config";
 import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
-
-const leftDrawerOpen = ref(false);
+const pad = ref("");
 const id = localStorage.getItem(studentKey);
 const studentId = ref(id);
 const { getOne } = StudentApi();
 const entityItem = ref({});
 const { userLogout } = AuthenApi();
 const authenStore = useAuthenStore();
+const onScroll = (val) => {
+  if (val.position == 0) {
+    pad.value = "bg-teal text-white";
+  } else {
+    pad.value = "bg-white text-teal";
+  }
+};
 onMounted(async () => {
+  pad.value = "bg-teal text-white";
   await fetchData();
   authenStore.setUserId(entityItem.value.teacher_id);
 });

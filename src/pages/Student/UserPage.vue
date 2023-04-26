@@ -7,8 +7,12 @@
       <div class="col-12 col-md-3 respons q-pa-none">
         <div class="row justify-center items-center relative-position">
           <div class="col-4" style="position: absolute; top: -100px">
-            <q-avatar size="9rem" class="shadow-12">
-              <img :src="entityItem.image?.thumbnail" alt="" />
+            <q-avatar color="white" size="9rem" class="shadow-12">
+              <img
+                style="border: 3px solid rgb(255, 255, 255)"
+                :src="entityItem.image?.thumbnail"
+                alt=""
+              />
             </q-avatar>
           </div>
         </div>
