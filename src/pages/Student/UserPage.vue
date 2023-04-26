@@ -207,6 +207,7 @@
           <div class="row fit justify-center">
             <div class="col-12 col-sm-9 q-mx-auto">
               <q-markup-table
+                style="max-height: 220px"
                 separator="cell"
                 dense
                 fullscreen
@@ -438,7 +439,6 @@ const fetchData = async () => {
   const responsePoint = await getConductList(studentId.value);
   if (responsePoint) {
     pointData.value = responsePoint.entity;
-    console.log("point", responsePoint);
   }
 
   loading.value = false;

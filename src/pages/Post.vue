@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, ref } from "vue";
 import Modal from "src/components/Modal.vue";
 import PostList from "src/components/PostList.vue";
 import { PostImageApi } from "src/api/PostImage";

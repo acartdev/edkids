@@ -57,23 +57,40 @@
         </q-carousel>
       </q-responsive>
     </q-card-section>
+    <q-separator />
+    <div class="row fit items-center justify-between">
+      <div class="col-6">
+        <q-rating
+          class="q-pa-sm"
+          v-model="like"
+          size="1.5em"
+          color="yellow"
+          icon="star_border"
+          icon-selected="star"
+        />
+      </div>
+      <div class="col-6 text-right q-px-md">
+        {{ Like + like == 0 ? "ไม่มีการให้ดาว" : Like + like + " ดาว" }}
+      </div>
+    </div>
   </q-card>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { TeacherApi } from "src/api/TeacherApi";
 import { PostApi } from "src/api/PostApi";
-
-// const one = ref(false);
-// const two = ref(false);
-// const three = ref(false);
-// const four = ref(false);
-// const toolbar = ref(false);
-
+const like = ref(0);
 const { getOneTeacher } = TeacherApi();
-const { getImagePost } = PostApi();
+const { getImagePost, likePost, likeGet } = PostApi();
 const checkImage = ref([]);
+const teacherId = ref(post.create_by);
+const entityItem = ref(false);
+const image = ref([]);
+const Like = ref(0);
+const like_post = ref({
+  post_id: post.id,
+});
 const post = defineProps({
   id: Number,
   upload_time: String,
@@ -84,15 +101,18 @@ const post = defineProps({
   post_id: Number,
 });
 
-const teacherId = ref(post.create_by);
-const entityItem = ref(false);
-const image = ref([]);
-let imageAmount = ref([]);
-
 onMounted(() => {
   fetchData();
   listImage();
 });
+onUnmounted(() => {
+  addLike();
+});
+const addLike = async () => {
+  for (let i = 0; i < like.value; i++) {
+    const response = await likePost(like_post.value);
+  }
+};
 const listImage = async () => {
   const respone = await getImagePost(post.id);
 
@@ -108,18 +128,16 @@ const listImage = async () => {
 
 const fetchData = async () => {
   const response = await getOneTeacher(teacherId.value);
-
+  const getLike = await likeGet(post.id);
+  if (getLike.likePost) {
+    Like.value = getLike.likePost;
+  }
   if (response) {
     response.entity.forEach((element) => {
       entityItem.value = element;
     });
   }
 };
-
-function checkPictureAmount(imageAmount) {
-  const amount = imageAmount;
-  return amount;
-}
 
 const slide = ref(0);
 </script>
