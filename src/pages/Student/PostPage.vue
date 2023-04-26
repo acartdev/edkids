@@ -28,9 +28,11 @@
 <script setup>
 import { ref, onMounted, defineAsyncComponent } from "vue";
 import { PostApi } from "src/api/PostApi";
-import { teacherKey } from "src/boot/utils/config";
+import { teacher_id } from "src/boot/utils/config";
+import { LocalStorage, useMeta } from "quasar";
+useMeta({ title: "รายงานกิจกรรม" });
 const { getPost } = PostApi();
-const id = localStorage.getItem(teacherKey);
+const id = LocalStorage.getItem(teacher_id);
 const teacherId = ref(id);
 const entityItem = ref(false);
 const imageId = ref([]);
@@ -46,7 +48,6 @@ const fetchData = async () => {
   if (response) {
     entityItem.value = response.dataList;
   }
-  console.log(entityItem.value);
 
   loading.value = false;
 };

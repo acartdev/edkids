@@ -125,7 +125,7 @@ const birth = ref("");
 const email = ref("");
 const teacherData = ref();
 const password = ref("");
-
+const studentData = ref();
 const emailInvalid = (val) => !!val || "กรุณากรอกอีเมลล์";
 const passwordInvalid = (val) => !!val || "กรุณาใส่รหัสผ่าน";
 const codeInvalid = (val) => !!val || "กรุณากรอกรหัสนักเรียน";
@@ -149,20 +149,23 @@ const teacherLogin = async () => {
   });
 
   Loading.hide();
-  console.log(response.status);
 
-  if (response && response.userData) {
-    if (response.userData.teacher_id) {
-      teacherData.value = response.userData;
-      authenStore.setAuthen(teacherData.value);
+  if (response && response.userData?.apiKey && response.userData.teacher_id) {
+    teacherData.value = response.userData;
+    authenStore.setAuthen(teacherData.value);
 
-      alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
-      setTimeout(() => {
-        window.location.replace("/");
-      }, 800);
-    }
+    alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับคุณครู");
+    setTimeout(() => {
+      window.location.replace("/");
+    }, 800);
+
     // console.log(teacherData.value);
   } else if (response.status != true) {
+    alertDanger(
+      "เข้าสู่ระบบไม่สำเร็จ",
+      "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง"
+    );
+  } else {
     alertDanger(
       "เข้าสู่ระบบไม่สำเร็จ",
       "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง"
@@ -179,22 +182,36 @@ const userSubmit = async () => {
   const year = birth.value.substring(6, 10);
   const result = year + month + day;
 
+  Loading.show({
+    spinner: QSpinnerGears,
+  });
   const response = await loginProcess({
     _u: stdCode.value,
     _p: result,
   });
+  Loading.hide();
+  // console.log(response);
   // if logined success
-  if (response && response.userData && response.userData.apiKey) {
-    authenStore.setUserAuthen(response.userData);
+  if (response && response.userData?.std_id && response.userData.apiKey) {
+    studentData.value = response.userData;
+    authenStore.setUserAuthen(studentData.value);
     // $q.notify({
     //   message: "Login Success!!",
     //   // avatar: response.userData.picture.path,
     // });
-    alertSuccess("เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับ");
+    alertSuccess(
+      "เข้าสู่ระบบสำเร็จ",
+      "ยินดีต้อนรับผู้ปกครองเรายินดีดูแลบุตรหลานของท่าน"
+    );
     setTimeout(() => {
-      window.location.replace("#/homePage");
+      window.location.replace("#/user");
     }, 500);
   } else if (response.status != true) {
+    alertDanger(
+      "เข้าสู่ระบบไม่สำเร็จ",
+      "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง"
+    );
+  } else {
     alertDanger(
       "เข้าสู่ระบบไม่สำเร็จ",
       "กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง"

@@ -1,13 +1,9 @@
 <template>
-  <div class="fit">
-    <apexchart
-      type="donut"
-      width="100%"
-      height="300px"
-      :options="set.options"
-      :series="set.series"
-    ></apexchart>
-  </div>
+  <apexchart
+    type="donut"
+    :options="set.options"
+    :series="set.series"
+  ></apexchart>
 </template>
 
 <script setup>
@@ -29,12 +25,27 @@ const resPoint = async () => {
 };
 const set = ref({
   options: {
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 320,
+            height: 320,
+          },
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    ],
     legend: {
       fontSize: "18px",
     },
     plotOptions: {
       pie: {
-        customScale: 0.9,
+        expandOnClick: true,
+
         donut: {
           size: "45",
         },

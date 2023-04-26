@@ -27,7 +27,7 @@
         >เตรียมอนุบาล ห้อง {{ student.room }} รหัสนักเรียน {{ student.special }}
       </q-item-label>
     </q-item-section>
-    <q-item-section center class="text-center">
+    <q-item-section center class="text-center dissmiss">
       <q-item-label>
         <span class="text-weight-medium text-center">{{
           student.status ? "นักเรียนเกณฑ์ปกติ" : "นักเรียนเกณฑ์ปกติ"
@@ -36,7 +36,7 @@
     </q-item-section>
 
     <q-item-section center side>
-      <div class="text-grey-8 q-gutter-xs">
+      <div class="dissmiss">
         <q-btn
           :to="`/edit-student/edit/${res.id}`"
           class="gt-xs"
@@ -72,6 +72,48 @@
           ><q-tooltip>ข้อมูลผู้ทั้งหมดของนักเรียน</q-tooltip></q-btn
         >
       </div>
+      <q-btn class="show" dense="" flat="" icon="expand_more">
+        <q-menu fit="">
+          <q-list>
+            <q-item>
+              <q-item-section>
+                <q-btn
+                  :to="`/edit-student/edit/${res.id}`"
+                  size="12px"
+                  flat
+                  dense
+                  round
+                  icon="edit"
+                  color="warning"
+                  ><q-tooltip>แก้ไขข้อมูล</q-tooltip></q-btn
+                >
+                <q-btn
+                  @click="confirm()"
+                  size="12px"
+                  flat
+                  dense
+                  round
+                  color="negative"
+                  icon="delete"
+                  ><q-tooltip>ลบข้อมูล</q-tooltip></q-btn
+                >
+
+                <q-btn
+                  size="12px"
+                  @click="pops = !pops"
+                  flat
+                  dense
+                  :to="`/edit-student/list/${res.id}`"
+                  round
+                  icon="groups"
+                  color="teal"
+                  ><q-tooltip>ข้อมูลผู้ทั้งหมดของนักเรียน</q-tooltip></q-btn
+                >
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
     </q-item-section>
   </q-item>
 </template>
@@ -168,4 +210,18 @@ const confirm = () => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+body.screen--xs {
+  .dissmiss {
+    display: none;
+  }
+  .show {
+    display: block;
+  }
+}
+body.screen--lg {
+  .show {
+    display: none;
+  }
+}
+</style>

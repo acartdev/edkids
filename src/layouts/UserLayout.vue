@@ -1,9 +1,26 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="transparent">
-      <q-toolbar class="bg-teal q-py-md z-max">
+      <q-toolbar class="bg-teal q-py-md z-max shadow-20">
+        <div class="row justifyt-center fit items-center gt-xs">
+          <div class="col-sm-7">
+            <q-breadcrumbs active-color="white">
+              <q-breadcrumbs-el label="หน้าหลัก" icon="home" to="/user" />
+              <q-breadcrumbs-el
+                label="รายงานกิจกรรม"
+                to="/post-list"
+                icon="perm_media"
+              />
+              <q-breadcrumbs-el
+                label="คะแนนความประพฤติ"
+                icon="self_improvement"
+                to="/conduct-list"
+              />
+            </q-breadcrumbs>
+          </div>
+        </div>
         <div class="row justify-end fit items-center">
-          <div class="col-6 col-md-2">
+          <div class="col-6 col-sm-3">
             <div class="flex justify-around items-center">
               <p>
                 {{ entityItem.gender ? "เด็กชาย" : "เด็กหญิง" }}
@@ -13,7 +30,7 @@
 
               <q-avatar class="q-ml-xs" size="50px">
                 <img :src="entityItem.image?.thumbnail" alt="" />
-                <q-menu>
+                <q-menu fit>
                   <q-list>
                     <q-item class="no-padding no-margin">
                       <q-item-section class="q-px-xs q-py-sm">
@@ -36,25 +53,7 @@
         </div>
       </q-toolbar>
     </q-header>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      :width="70"
-      :breakpoint="900"
-      elevated
-      class="text-teal flex flex-column items-center justify-around"
-      style="background-color: #1e293b"
-    >
-      <q-list class="">
-        <q-item
-          class="q-my-xl"
-          v-for="items in linksList"
-          :key="items"
-          :to="items.link"
-          ><q-icon size="30px" :name="items.icon"></q-icon>
-        </q-item>
-      </q-list>
-    </q-drawer>
+
     <q-page-container class="fit">
       <router-view v-slot="{ Component }">
         <transition name="slide-fade">
@@ -62,16 +61,34 @@
         </transition>
       </router-view>
     </q-page-container>
-    <q-tabs v-model="tab" class="fixed-bottom bg-white" dense align="justify">
+    <q-tabs class="fixed-bottom bg-white shadow-20" dense align="justify">
+      <q-route-tab
+        to="/user"
+        exact
+        class="text-teal"
+        icon="home"
+        label="หน้าหลัก"
+      />
+      <q-route-tab
+        to="/conduct-list"
+        exact=""
+        class="text-teal"
+        icon="self_improvement"
+        label="ความประพฤติ"
+      />
       <q-route-tab
         exact
-        v-for="menu in linksList"
-        :key="menu"
-        :to="menu.link"
+        to="/post-list"
         class="text-teal"
-        :name="menu.names"
-        :icon="menu.icon"
-        :label="menu.title"
+        icon="perm_media"
+        label="รายงานกิจกรรม"
+      />
+      <q-route-tab
+        exact
+        to="/teacher-info"
+        class="text-teal"
+        icon="account_circle"
+        label="ข้อมูลครู"
       />
     </q-tabs>
   </q-layout>
@@ -80,25 +97,21 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { LocalStorage, useMeta, useQuasar } from "quasar";
-import { useRoute, useRouter } from "vue-router";
 import { StudentApi } from "src/api/StudentApi";
 import { studentKey } from "src/boot/utils/config";
 import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
-import MenuUserLink from "src/components/MenuUserLink.vue";
-// import { biGear, biPencil } from "@quasar/extras/bootstrap-icons";
-const route = useRouter();
+
 const leftDrawerOpen = ref(false);
 const id = localStorage.getItem(studentKey);
 const studentId = ref(id);
 const { getOne } = StudentApi();
 const entityItem = ref({});
 const { userLogout } = AuthenApi();
-const $q = useQuasar();
 const authenStore = useAuthenStore();
-
-onMounted(() => {
-  fetchData();
+onMounted(async () => {
+  await fetchData();
+  authenStore.setUserId(entityItem.value.teacher_id);
 });
 
 const fetchData = async () => {
@@ -107,70 +120,9 @@ const fetchData = async () => {
     respone.entity.forEach((element) => {
       entityItem.value = element;
     });
-    // entityItem.value = respone;
   }
 };
-const linksList = [
-  {
-    title: "หน้าหลัก",
-    icon: "home",
-    link: "/homePage/",
-    color: "text-white",
-    names: "home",
-  },
-  {
-    title: "โพสต์",
-    icon: "perm_media",
-    link: "/post-list",
-    color: "text-white",
-    names: "post",
-  },
-  {
-    title: "ความประพฤติ",
-    icon: "self_improvement",
-    link: "/conduct-list",
-    color: "text-white",
-    names: "conduct",
-  },
-  {
-    title: "ครูผู้สอน",
-    icon: "account_circle",
-    link: "/teacher-info",
-    color: "text-white",
-    names: "teacher",
-  },
-  // {
-  //   title: "ออกจากระบบ",
-  //   icon: "logout",
-  //   link: "/",
-  //   color: "text-red",
-  // },
-];
-const logoutConfirm = async () => {
-  $q.dialog({
-    title: "EDKids",
-    message: "ยืนยันการออกจากระบบ",
-    cancel: true,
-    ok: {
-      label: "ตกลง",
-      flat: true,
-      outline: true,
-      color: "positive",
-    },
-    cancel: {
-      label: "ยกเลิก",
-      flat: true,
-      color: "negative",
-    },
-  })
-    .onOk(() => {
-      console.log("OK");
-      logoutProcess();
-    })
-    .onCancel(() => {
-      console.log("Cancel");
-    });
-};
+
 const logoutProcess = async () => {
   const response = await userLogout();
   console.log("userLogout", response);
@@ -200,6 +152,9 @@ const logoutProcess = async () => {
 body.screen--lg {
   .q-tabs {
     display: none;
+  }
+  .q-toolbar {
+    padding: 1rem 1rem;
   }
 }
 .q-layout {

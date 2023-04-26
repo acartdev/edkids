@@ -48,28 +48,29 @@ import { biLine } from "@quasar/extras/bootstrap-icons";
 import { ref, onMounted } from "vue";
 import { TeacherApi } from "src/api/TeacherApi";
 import { useRoute } from "vue-router";
-import { teacherKey } from "src/boot/utils/config";
-
+import { teacher_id } from "src/boot/utils/config";
+import { useAuthenStore } from "src/stores/authen";
+import { LocalStorage, useMeta } from "quasar";
+useMeta({ title: "ข้อมูลครู" });
+const authenStore = useAuthenStore();
 const { getOneTeacher } = TeacherApi();
-const id = localStorage.getItem(teacherKey);
-const studentId = ref(id);
+const id = ref();
+
 const imageFile = ref();
 const route = useRoute();
 const entityItem = ref({});
 const loading = ref(false);
 
-onMounted(() => {
-  if (route.params.studentId) {
-    studentId.value = route.params.studentId;
-  }
-  if (studentId.value) {
+onMounted(async () => {
+  id.value = LocalStorage.getItem(teacher_id);
+  if (id.value) {
     fetchData();
   }
 });
 
 const fetchData = async () => {
   loading.value = true;
-  const respone = await getOneTeacher(studentId.value);
+  const respone = await getOneTeacher(id.value);
   loading.value = false;
 
   if (respone) {

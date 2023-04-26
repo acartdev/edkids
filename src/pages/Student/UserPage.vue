@@ -2,27 +2,27 @@
   <q-page class="q-mb-xl">
     <div class="row q-pa-none">
       <div class="col-12 col-md-0 relative-position">
-        <q-img fit="cover" :src="url" :ratio="16 / 9" />
+        <q-img fit="cover" class="shadow-12" :src="url" :ratio="16 / 9" />
       </div>
       <div class="col-12 col-md-3 respons q-pa-none">
-        <div class="row justify-center items-center">
-          <div class="col-4" style="position: absolute; top: 140px">
+        <div class="row justify-center items-center relative-position">
+          <div class="col-4" style="position: absolute; top: -100px">
             <q-avatar size="9rem" class="shadow-12">
               <img :src="entityItem.image?.thumbnail" alt="" />
             </q-avatar>
           </div>
         </div>
         <div class="row justify-center items-center q-mt-xl q-pa-none">
-          <div class="col-5 q-ml-sm">
+          <div class="col-6 q-ml-sm">
             <p class="text-center q-pt-md q-mb-md text-h6">
-              ข้อมูลนักเรียน <q-icon color="warning" name="bolt"></q-icon>
+              ข้อมูลของนักเรียน<q-icon color="warning" name="bolt"></q-icon>
             </p>
           </div>
           <div class="col-12">
             <q-card>
               <q-card-section>
                 <div class="row">
-                  <div class="col-7">
+                  <div class="col-8">
                     <ul class="q-px-md q-py-none">
                       <li class="q-mb-xs">
                         <span
@@ -41,7 +41,7 @@
                       </li>
                       <li class="q-mb-xs">
                         <span
-                          ><q-icon color="teal" name="account_circle"></q-icon>
+                          ><q-icon color="teal" name="child_friendly"></q-icon>
                           อายุ:</span
                         >
                         {{ age[0] }}
@@ -81,7 +81,7 @@
                       </li>
                     </ul>
                   </div>
-                  <div class="col-3 self-center">
+                  <div class="col-2 self-center">
                     <q-icon
                       size="80px"
                       color="warning"
@@ -125,7 +125,7 @@
               <q-card>
                 <q-card-section>
                   <div class="row">
-                    <div class="col-7">
+                    <div class="col-8">
                       <ul class="q-px-md q-py-none">
                         <li class="q-mb-xs">
                           <span
@@ -180,7 +180,7 @@
                         </li>
                       </ul>
                     </div>
-                    <div class="col-3 self-center">
+                    <div class="col-2 self-center">
                       <q-icon
                         size="80px"
                         color="warning"
@@ -319,7 +319,61 @@
             </li>
           </ul>
         </div>
-        <div class="col-sm-3"></div>
+        <div class="col-sm-6 q-mt-xl">
+          <div class="row fit">
+            <div class="col-sm-6 text-left">
+              <q-img
+                class="shadow-12"
+                width="200px"
+                height="200px"
+                :src="teacherEntityItem?.image.thumbnail"
+              ></q-img>
+            </div>
+            <div class="col-sm-6">
+              <ul class="q-px-md q-py-none">
+                <li class="q-mb-xs">
+                  <span
+                    ><q-icon color="teal" name="person"></q-icon>
+                    ชื่อจริง:</span
+                  >
+                  &nbsp;
+
+                  {{
+                    teacherEntityItem?.first_name +
+                    " " +
+                    teacherEntityItem?.last_name
+                  }}
+                </li>
+                <li class="q-mb-xs">
+                  <span
+                    ><q-icon color="teal" name="account_circle"></q-icon>
+                    ชื่อเล่น: ครู </span
+                  >{{ teacherEntityItem?.nick_name }}
+                </li>
+                <li class="q-mb-xs">
+                  <span
+                    ><q-icon color="teal" name="phone"></q-icon> ตำแหน่ง:</span
+                  >
+                  {{ teacherEntityItem?.position }}
+                </li>
+                <li class="q-mb-xs">
+                  <span
+                    ><q-icon color="teal" name="meeting_room"></q-icon>
+                    ครูควบคุมห้อง:</span
+                  >
+                  {{ teacherEntityItem?.room }}
+                </li>
+
+                <li class="q-mb-xs">
+                  <span
+                    ><q-icon color="teal" name="hail"></q-icon> โรงเรียน:</span
+                  >
+                  เตรียมอนุบาล
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <div class="col-sm-5 q-mt-xl text-center">
           <div
             style="border-radius: 30px"
@@ -355,7 +409,11 @@ import { useRoute } from "vue-router";
 import { ParentsApi } from "src/api/ParentsApi";
 import { ConductApi } from "src/api/ConductApi";
 import { TeacherApi } from "src/api/TeacherApi";
-import { studentKey, teacherKey } from "src/boot/utils/config";
+import { studentKey, teacher_id } from "src/boot/utils/config";
+import { useAuthenStore } from "src/stores/authen";
+import { LocalStorage, useMeta } from "quasar";
+useMeta({ title: "หน้าหลัก" });
+const authenStore = useAuthenStore();
 const url = ref("https://picsum.photos/500/300");
 
 const route = useRoute();
@@ -370,8 +428,8 @@ const { getOne } = StudentApi();
 const { getParentsStudentInfo } = ParentsApi();
 const { getConductAverage } = ConductApi();
 const { getOneTeacher } = TeacherApi();
-const id = localStorage.getItem(studentKey);
-const teacherId = localStorage.getItem(teacherKey);
+const id = LocalStorage.getItem(studentKey);
+const teacherId = ref();
 const studentId = ref(id);
 const parentEntityItem = ref({});
 const entityItem = ref({});
@@ -385,7 +443,7 @@ const fetchData = async () => {
   loading.value = true;
 
   const respone = await getOne(studentId.value);
-  const teacherResponse = await getOneTeacher(teacherId);
+  const teacherResponse = await getOneTeacher(teacherId.value);
   const parentsResponse = await getParentsStudentInfo(studentId.value);
   const conductResponse = await getConductAverage(studentId.value);
 
@@ -475,13 +533,15 @@ const chartConduct = defineAsyncComponent(() =>
   import("../../components/Charts/ConductChart.vue")
 );
 
-onMounted(() => {
+onMounted(async () => {
+  teacherId.value = LocalStorage.getItem(teacher_id);
   refresh();
+
   if (route.params.studentId) {
     studentId.value = route.params.studentId;
   }
 
-  fetchData();
+  await fetchData();
 });
 </script>
 <style scoped lang="scss">

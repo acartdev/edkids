@@ -3,7 +3,7 @@
   <apexchart
     v-if="res != ''"
     type="bar"
-    height="300"
+    height="320px"
     :options="data.options"
     :series="data.series"
   ></apexchart>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 const res = ref([response.years]);
 const response = defineProps({
   years: {
@@ -27,6 +27,17 @@ const response = defineProps({
 
 const data = ref({
   options: {
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 300,
+            height: 320,
+          },
+        },
+      },
+    ],
     colors: ["#60f4a0"],
     chart: {
       id: "vuechart-example",

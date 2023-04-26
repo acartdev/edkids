@@ -7,14 +7,20 @@
     </div>
 
     <div class="row bg-grey-2 q-gutter-md justify-around fit q-pa-xl">
-      <div class="col-sm-6 bg-white q-pa-sm shadow-18">
+      <div
+        style="border-radius: 30px"
+        class="col-sm-6 col-12 bg-white q-pa-sm shadow-18"
+      >
         <div v-if="loadding" class="fit flex flex-center">
           <q-spinner-pie size="300px" color="green-13" />
         </div>
         <chartYears v-else :years="years" :amount="amount" />
       </div>
-      <div class="col-sm-5 col-12 bg-white q-pt-lg shadow-20">
-        <div v-if="loadding" class="fit flex flex-center">
+      <div
+        class="col-sm-5 col-12 bg-white q-pt-lg shadow-20"
+        style="border-radius: 30px"
+      >
+        <div v-if="loadding" class="">
           <q-spinner-pie size="300px" color="green-13" />
         </div>
         <chartPoint v-else />
@@ -26,38 +32,40 @@
         class="col-sm-11 col-11 bg-white self-strech q-pa-md shadow-12"
         style="min-height: 560px"
       >
-        <div class="flex items-center column">
-          <p class="text-h5">Top5 นักเรียนที่เกณฑ์ดี</p>
-          <div class="contain fit">
-            <q-markup-table v-if="check" class="shadow-4">
-              <thead>
-                <tr class="">
-                  <th class="text-center">
-                    <span class="text-h6">เลขที่</span>
-                  </th>
-                  <th class="text-center">
-                    <span class="text-h6">รูปภาพ</span>
-                  </th>
-                  <th class="text-center">
-                    <span class="text-h6">ชื่อจริง</span>
-                  </th>
-                  <th class="text-center">
-                    <span class="text-h6">ชื่อเล่น</span>
-                  </th>
-                  <th class="text-center">
-                    <span class="text-h6">จำนวนคะแนน</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <StudentGrad
-                  v-for="items in data"
-                  :key="items"
-                  v-bind="items"
-                />
-              </tbody>
-            </q-markup-table>
-            <p v-else class="text-center text-h6">ยังไม่มีการให้คะแนน</p>
+        <div class="">
+          <p class="text-h5 text-center">Top 5 นักเรียนที่เกณฑ์ดี</p>
+          <div class="row">
+            <div class="col-12 col-sm-12">
+              <q-markup-table v-if="check" class="shadow-4">
+                <thead>
+                  <tr class="">
+                    <th class="text-center">
+                      <span class="text-body1">เลขที่</span>
+                    </th>
+                    <th class="text-center">
+                      <span class="text-body1">รูปภาพ</span>
+                    </th>
+                    <th class="text-center">
+                      <span class="text-body1">ชื่อจริง</span>
+                    </th>
+                    <th class="text-center">
+                      <span class="text-body1">ชื่อเล่น</span>
+                    </th>
+                    <th class="text-center">
+                      <span class="text-body1">จำนวนคะแนน</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <StudentGrad
+                    v-for="items in data"
+                    :key="items"
+                    v-bind="items"
+                  />
+                </tbody>
+              </q-markup-table>
+              <p v-else class="text-center text-h6">ยังไม่มีการให้คะแนน</p>
+            </div>
           </div>
         </div>
       </div>
@@ -122,9 +130,4 @@ onMounted(() => {
   fetchList();
 });
 </script>
-<style scoped>
-.row > div {
-  height: 330px;
-  border-radius: 30px;
-}
-</style>
+<style scoped></style>

@@ -50,7 +50,7 @@ const routes = [
     meta: { requireAuth: true },
     children: [
       {
-        path: "/homePage",
+        path: "",
         component: () => import("pages/Student/UserPage.vue"),
       },
       {

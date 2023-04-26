@@ -6,10 +6,12 @@ export default boot(({ router }) => {
   router.beforeEach((to, from, next) => {
     // console.log("from", from, "to", to);
     const requiresAuth = to.matched.some((record) => record.meta.requireAdmin);
-    if (requiresAuth && LocalStorage.getItem(authenKey) == null) {
-      next({ path: "/login" });
-    } else if (LocalStorage.getItem(teacherKey)) {
-      next();
+    if (
+      requiresAuth &&
+      LocalStorage.getItem(authenKey) == null &&
+      LocalStorage.getItem(teacherKey) == null
+    ) {
+      next({ path: "/login", replace: true });
     } else {
       next();
     }

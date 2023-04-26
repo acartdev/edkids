@@ -45,6 +45,7 @@ const { alertSuccess, alertDanger } = alertShow();
 const point = ref("");
 const note = ref("");
 const hide = defineEmits(["hide"]);
+const date = ref();
 
 const options = [
   {
@@ -104,6 +105,10 @@ const clear = () => {
   point.value = "";
   note.value = "";
 };
+onMounted(() => {
+  const dateNow = new Date().toISOString().split("T")[0];
+  date.value = String(dateNow);
+});
 const givePoint = async () => {
   if (point.value.values) {
     Loading.show({

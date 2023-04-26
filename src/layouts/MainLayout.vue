@@ -2,17 +2,19 @@
   <q-layout view="lHh Lpr lFf">
     <q-header class="q-py-sm shadow-3" :class="bgColor">
       <q-toolbar class="flex justify-between">
-        <q-btn
-          style="color: #1e293b"
-          class="text-h6"
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-
+        <div class="">
+          <q-btn
+            style="color: #1e293b"
+            class="text-h6"
+            flat
+            dense
+            round
+            icon="menu"
+            aria-label="Menu"
+            @click="leftDrawerOpen = !leftDrawerOpen"
+          />
+        </div>
+        <p class="text-dark text-center text-h5">{{ currentTime }}</p>
         <div class="flex items-center justify-end">
           <div class="text-right text-subtitle1 no-padding">
             <p class="no-margin" style="color: #1e293b">
@@ -33,7 +35,7 @@
                 style="object-fit: cover"
               />
             </q-avatar>
-            <q-menu>
+            <q-menu fit>
               <q-list>
                 <q-item class="no-padding no-margin">
                   <q-item-section class="q-px-xs q-py-sm"
@@ -97,7 +99,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, onBeforeMount } from "vue";
+import { onMounted, ref, onBeforeMount, onBeforeUnmount } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useQuasar, Notify, LocalStorage } from "quasar";
 import { teacherKey } from "src/boot/utils/config";
@@ -105,7 +107,7 @@ import { AuthenApi } from "src/api/AuthenApi";
 import { useAuthenStore } from "src/stores/authen";
 import { teacherApi } from "src/api/Teacher";
 import { alertShow } from "src/composable/alertShow";
-
+const currentTime = ref();
 const bgColor = ref("bg-white");
 const { alertWarning } = alertShow();
 const { getTeacher } = teacherApi();
@@ -152,6 +154,12 @@ const logOut = () => {
 };
 onMounted(() => {
   getUserProcess();
+  setInterval(() => {
+    currentTime.value = new Date().toLocaleString("th-TH");
+  }, 1000);
+});
+onBeforeUnmount(() => {
+  clearInterval(currentTime.value);
 });
 
 const getUser = async () => {

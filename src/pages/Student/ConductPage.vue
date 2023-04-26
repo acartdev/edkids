@@ -33,11 +33,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, defineAsyncComponent } from "vue";
+import { ref, onMounted, defineAsyncComponent } from "vue";
 import { ConductApi } from "src/api/ConductApi";
 import { useRoute } from "vue-router";
+import { useMeta } from "quasar";
 import { studentKey } from "src/boot/utils/config";
-
+useMeta({ title: "คะแนนความประพฤติ" });
 const { getConductList } = ConductApi();
 
 const route = useRoute();

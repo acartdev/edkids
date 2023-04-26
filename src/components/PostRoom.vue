@@ -1,8 +1,8 @@
 <template>
-  <q-card class="q-mb-md">
+  <q-card class="q-mb-md q-mt-md">
     <q-card-section>
       <div class="flex">
-        <q-avatar size="80px">
+        <q-avatar size="60px">
           <img
             style="object-fit: cover; object-position: center"
             :src="entityItem?.image?.thumbnail"
@@ -105,15 +105,14 @@ let imageAmount = ref([]);
 onMounted(() => {
   fetchData();
   listImage();
-  console.log(image.value);
 });
 const listImage = async () => {
   const respone = await getImagePost(post.id);
-  console.log(respone);
+
   if (respone) {
     for (let i of respone.entity) {
       checkImage.value.push(i.img_name);
-      console.log(checkImage.value);
+
       image.value.push(i.image.thumbnail);
       // imageAmount.value.push(Number(image.value.length));
     }
@@ -136,36 +135,6 @@ function checkPictureAmount(imageAmount) {
 }
 
 const slide = ref(0);
-const lorem =
-  "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque voluptatem totam, architecto cupiditate officia rerum, error dignissimos praesentium libero ab nemo.";
 </script>
 
-<style scoped>
-.wrapper1 {
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: 450px;
-  padding: none;
-}
-.wrapper2 {
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: 400px;
-  padding: none;
-}
-.wrapper3 {
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: 300px 300px;
-  padding: none;
-}
-.wrapper4 {
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: 300px 300px;
-  padding: none;
-}
-.grid-item1 {
-  grid-column: 1/3;
-}
-</style>
+<style scoped></style>
