@@ -2,6 +2,7 @@ const routes = [
   {
     path: "/login",
     component: () => import("layouts/LoginForm.vue"),
+    meta: { emptyLogin: true },
 
     children: [
       {

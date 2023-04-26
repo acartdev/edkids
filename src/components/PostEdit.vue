@@ -32,6 +32,7 @@
                   icon="close "
                   flat=""
                   dense=""
+                  color="red"
                   @click="deleteImgProcess(index, img.id)"
                 ></q-btn>
                 <q-img :src="img.image.thumbnail"> </q-img>

@@ -35,6 +35,7 @@ module.exports = configure(function (/* ctx */) {
       "vueSmooth",
       "requireAuth",
       "requireAdmin",
+      "emptyLogin",
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css

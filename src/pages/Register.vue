@@ -374,11 +374,11 @@
                     class="text-secondary q-mr-sm"
                     outline
                     rounded
-                    label="บันทึก"
+                    label="เพิ่มข้อมูล"
                   ></q-btn>
                   <q-btn
                     class="text-warning"
-                    @click="clear(), (tab = 'mails'), alertWarning()"
+                    @click="(tab = 'mails'), alertWarning(), (student = {})"
                     outline
                     rounded
                     label="ยกเลิก"

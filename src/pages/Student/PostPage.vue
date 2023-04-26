@@ -57,7 +57,7 @@ const post = defineAsyncComponent(() =>
 </script>
 
 <style scoped lang="scss">
-body.screen--lg {
+body.screen--md {
   .q-page {
     padding: 0;
     margin: 0;

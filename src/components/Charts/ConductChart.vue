@@ -1,5 +1,10 @@
 <template>
-  <apexchart type="pie" w :options="chartOptions" :series="series"></apexchart>
+  <apexchart
+    type="pie"
+    width="300px"
+    :options="chartOptions"
+    :series="series"
+  ></apexchart>
 </template>
 
 <script setup>

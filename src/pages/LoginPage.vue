@@ -94,7 +94,7 @@
     </q-form>
   </div>
   <div class="row justify-center q-mt-md">
-    <div class="col-sm-10 text-center text-white">
+    <div class="col-sm-10 col-11 z-max text-center text-white">
       <p>
         หากท่าพบปัญหาการใช้งานหรือต้องการสมัครการเข้าใช้งานสำหรับครูผู้ควบคุม
         โปรด

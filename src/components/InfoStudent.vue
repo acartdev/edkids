@@ -6,6 +6,7 @@
         <div class="row q-mt-md">
           <div class="col-sm-3">
             <q-file
+              v-if="!studentEntity.pms"
               display-value=""
               @update:model-value="imageProcess"
               dense=""
@@ -177,6 +178,7 @@ import { teacherApi } from "src/api/Teacher";
 import { alertShow } from "src/composable/alertShow";
 import { FileApi } from "src/api/FileApi";
 import { StudentApi } from "src/api/StudentApi";
+import { Loading, QSpinnerGears } from "quasar";
 const { alertSuccess } = alertShow();
 const { updateStudent } = StudentApi();
 const { uploadImageApi } = FileApi();
@@ -232,6 +234,7 @@ onMounted(async () => {
 });
 
 const updateProcess = async () => {
+  Loading.show({ spinner: QSpinnerGears });
   if (imageList.value) {
     if (
       studentEntity.value.img_file != "" ||
@@ -249,6 +252,7 @@ const updateProcess = async () => {
   if (response) {
     console.log(response);
   }
+  Loading.hide();
   alertSuccess("แก้ไขข้อมูลสำเร็จจ", `แก้ไข้ข้อมูลของนักเรียนสำเร็จ`);
 };
 const fetchTeacher = async (id) => {

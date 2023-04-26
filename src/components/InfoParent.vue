@@ -7,6 +7,7 @@
           <div class="col-sm-3">
             <q-file
               display-value=""
+              v-if="!parentEntity.pms"
               @update:model-value="imageProcess"
               dense=""
               class="absolute"
@@ -186,6 +187,7 @@ import { FileApi } from "src/api/FileApi";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { ParentApi } from "src/api/ParentApi";
 import { alertShow } from "src/composable/alertShow";
+import { Loading, QSpinnerGears } from "quasar";
 const { alertSuccess } = alertShow();
 const { updateParent } = ParentApi();
 const { uploadImageApi } = FileApi();
@@ -261,6 +263,9 @@ const revertDate = (val = "") => {
   }
 };
 const updateProcess = async () => {
+  Loading.show({
+    spinner: QSpinnerGears,
+  });
   if (imageList.value) {
     if (
       parentEntity.value.img_file != "" ||
@@ -278,6 +283,7 @@ const updateProcess = async () => {
   // if (response) {
   //   console.log(response);
   // }
+  Loading.hide();
   alertSuccess("แก้ไขข้อมูลสำเร็จจ", `แก้ไข้ข้อมูลผู้ปกครองของนักเรียนสำเร็จ`);
 };
 const uploadImage = () => {

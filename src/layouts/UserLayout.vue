@@ -3,7 +3,7 @@
     <q-header class="transparent">
       <q-toolbar class="bg-teal q-py-md z-max shadow-20">
         <div class="row justifyt-center fit items-center gt-xs">
-          <div class="col-sm-7">
+          <div class="col-sm-9">
             <q-breadcrumbs active-color="white">
               <q-breadcrumbs-el label="หน้าหลัก" icon="home" to="/user" />
               <q-breadcrumbs-el
@@ -16,11 +16,16 @@
                 icon="self_improvement"
                 to="/conduct-list"
               />
+              <q-breadcrumbs-el
+                label="ข้อมูลครู"
+                icon="account_circle"
+                to="/teacher-info"
+              />
             </q-breadcrumbs>
           </div>
         </div>
         <div class="row justify-end fit items-center">
-          <div class="col-6 col-sm-3">
+          <div class="col-7 col-sm-5">
             <div class="flex justify-around items-center">
               <p>
                 {{ entityItem.gender ? "เด็กชาย" : "เด็กหญิง" }}
@@ -61,7 +66,7 @@
         </transition>
       </router-view>
     </q-page-container>
-    <q-tabs class="fixed-bottom bg-white shadow-20" dense align="justify">
+    <q-tabs class="fixed-bottom bg-white shadow-20 gt-xl" dense align="justify">
       <q-route-tab
         to="/user"
         exact
@@ -149,7 +154,7 @@ const logoutProcess = async () => {
   margin: 0;
 }
 
-body.screen--lg {
+body.screen--md {
   .q-tabs {
     display: none;
   }

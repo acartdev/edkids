@@ -5,15 +5,17 @@ import { authenKey, teacherKey, studentKey } from "src/boot/utils/config";
 export default boot(({ router }) => {
   router.beforeEach((to, from, next) => {
     // console.log("from", from, "to", to);
-    const requiresAuth = to.matched.some((record) => record.meta.requireAdmin);
+    const requiresAuth = to.matched.some((record) => record.meta.emptyLogin);
     if (
       requiresAuth &&
       LocalStorage.getItem(authenKey) == null &&
       LocalStorage.getItem(teacherKey) == null
     ) {
-      next({ path: "/login", replace: true });
+      next();
+    } else if (requiresAuth && LocalStorage.getItem(teacherKey) != null) {
+      next({ path: "/" });
     } else if (requiresAuth && LocalStorage.getItem(studentKey) != null) {
-      next({ path: "/login", replace: true });
+      next({ path: "/user" });
     } else {
       next();
     }

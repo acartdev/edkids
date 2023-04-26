@@ -219,7 +219,7 @@ body.screen--xs {
     display: block;
   }
 }
-body.screen--lg {
+body.screen--md {
   .show {
     display: none;
   }

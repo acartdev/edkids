@@ -48,6 +48,7 @@ export const useAuthenStore = defineStore("authenStore", {
       LocalStorage.remove(teacherKey);
       LocalStorage.remove(studentKey);
       LocalStorage.remove(authenKey);
+      LocalStorage.remove(teacher_id);
     },
   },
 });

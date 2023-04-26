@@ -37,36 +37,23 @@
           transition-prev="jump-right"
           transition-next="jump-left"
           animated
-          control-color="white"
+          control-color="green-13"
           prev-icon="arrow_back_ios"
           next-icon="arrow_forward_ios"
+          control-type="push"
+          padding=""
           arrows
           height="400px"
           class="fit rounded-borders"
         >
           <q-carousel-slide
+            class="flex-center no-warp"
             v-for="(img, index) in image"
             :key="index"
             :name="index"
             :img-src="img"
-          />
-          <!-- <q-carousel-slide
-            class="column fit no-wrap flex-center"
-            v-for="(item, index) in image"
-            :key="index"
-            :name="index"
-          > -->
-          <!-- <div class="row fit">
-
-                <q-img :src="item"></q-img>
-
-            </div> -->
-
-          <!-- <q-icon name="terrain" size="56px" />
-          <div class="q-mt-md text-center">
-            {{ lorem }}
-          </div> -->
-          <!-- </q-carousel-slide> -->
+          >
+          </q-carousel-slide>
         </q-carousel>
       </q-responsive>
     </q-card-section>

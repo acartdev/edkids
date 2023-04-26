@@ -52,8 +52,8 @@ body.screen--xs {
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 220px;
-    height: 220px;
+    width: 180px;
+    height: 180px;
     background: #60f4a0;
     clip-path: circle(50% at left 30% bottom 30%);
   }

@@ -14,6 +14,7 @@
             <tr class="">
               <th class="text-left">วันที่</th>
               <th class="text-left">ชื่อ-นามสกุล</th>
+              <th class="text-left gt-xs">ชื่อเล่น</th>
               <th class="text-center">ความประพฤติ</th>
               <th class="text-center">หมายเหตุ</th>
             </tr>
@@ -48,9 +49,6 @@ const entityItem = ref([]);
 const loading = ref(false);
 
 onMounted(() => {
-  if (route.params.studentId) {
-    studentId.value = route.params.studentId;
-  }
   if (studentId.value) {
     fetchData();
   }
@@ -74,7 +72,7 @@ const conductList = defineAsyncComponent(() =>
 </script>
 
 <style scoped lang="scss">
-body.screen--lg {
+body.screen--md {
   .q-page {
     margin: 0;
   }

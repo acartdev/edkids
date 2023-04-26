@@ -28,12 +28,7 @@
               </q-input>
             </div>
             <div class="col-sm-5">
-              <q-input
-                dense
-                label="ห้องที่ควบคุม"
-                disable=""
-                v-model="teacherData.room"
-              >
+              <q-input dense label="ห้องที่ควบคุม" v-model="teacherData.room">
                 <template v-slot:before
                   ><p class="text-caption text-center q-pt-lg text-dark">
                     ห้อง

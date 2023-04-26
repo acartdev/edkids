@@ -4,6 +4,7 @@
     <td class="text-left">{{ res.date }}</td>
 
     <td class="text-left">{{ res.first_name + " " + res.last_name }}</td>
+    <td class="text-left gt-xs">{{ res.nick_name }}</td>
     <td class="text-center">
       {{
         res.result == "good"

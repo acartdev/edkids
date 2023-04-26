@@ -82,11 +82,7 @@
                     </ul>
                   </div>
                   <div class="col-2 self-center">
-                    <q-icon
-                      size="80px"
-                      color="warning"
-                      name="insights"
-                    ></q-icon>
+                    <q-icon size="80px" color="warning" name="surfing"></q-icon>
                   </div>
                 </div>
               </q-card-section>
@@ -198,19 +194,62 @@
 
     <div class="desktop q-px-xl">
       <div class="row fit q-pa-md">
-        <div class="col-sm-3 text-left q-mb-md">
+        <div class="col-sm-3 text-center q-mt-lg q-mb-md">
           <q-img
-            class="shadow-12"
+            class="shadow-12 q-mr-xl"
             width="200px"
             height="200px"
             :src="entityItem.image?.thumbnail"
           ></q-img>
         </div>
 
-        <div class="col-sm-3 text-left">
+        <div class="col-sm-9 q-mt-lg">
+          <div class="row fit justify-center">
+            <div class="col-12 col-sm-9 q-mx-auto">
+              <q-markup-table
+                separator="cell"
+                dense
+                fullscreen
+                wrap-cells
+                class="fit"
+              >
+                <thead>
+                  <tr class="">
+                    <th class="text-left">วันที่</th>
+                    <th class="text-left">ชื่อ-นามสกุล</th>
+                    <th class="text-left gt-xs">ชื่อเล่น</th>
+                    <th class="text-center">ความประพฤติ</th>
+                    <th class="text-center">หมายเหตุ</th>
+                  </tr>
+                </thead>
+                <tbody
+                  v-if="pointData.length > 0"
+                  class="bg-grey-12 no-padding"
+                >
+                  <ConductList
+                    v-for="item in pointData"
+                    :key="item"
+                    v-bind="item"
+                  />
+                </tbody>
+                <p v-else>ไม่พบข้อมูบการให้คะแนน</p>
+              </q-markup-table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-4 text-left">
           <div class="row fit">
-            <div class="col-sm-12">
-              <ul class="q-px-md q-py-none">
+            <div class="col-sm-8">
+              <ul class="q-px-md q-py-none bg-white shadow-12 q-py-md">
+                <li class="text-center bg-teal text-white q-mx-auto">
+                  <span
+                    >ข้อมูลของนักเรียน<q-icon
+                      color="white"
+                      name="person"
+                    ></q-icon>
+                  </span>
+                </li>
                 <li class="q-mb-xs">
                   <span
                     ><q-icon color="teal" name="person"></q-icon>
@@ -269,68 +308,34 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-3">
-          <q-img
-            width="200px"
-            height="200px"
-            fit="cover"
-            :src="parentEntityItem.image?.thumbnail"
-          ></q-img>
-        </div>
-        <div class="col-sm-3">
-          <ul class="q-px-md q-py-none">
-            <li class="q-mb-xs">
-              <span
-                ><q-icon color="teal" name="person"></q-icon> ชื่อจริง:</span
-              >
-              &nbsp;
-
-              {{
-                parentEntityItem.first_name + " " + parentEntityItem.last_name
-              }}
-            </li>
-            <li class="q-mb-xs">
-              <span
-                ><q-icon color="teal" name="account_circle"></q-icon>
-                ชื่อเล่น:</span
-              >{{ parentEntityItem.nick_name }}
-            </li>
-            <li class="q-mb-xs">
-              <span><q-icon color="teal" name="phone"></q-icon> เบอร์โทร:</span>
-              {{ parentEntityItem.phone }}
-            </li>
-            <li class="q-mb-xs">
-              <span
-                ><q-icon color="teal" name="meeting_room"></q-icon> อีเมล:</span
-              >
-              {{ parentEntityItem.email }}
-            </li>
-
-            <li class="q-mb-xs">
-              <span><q-icon color="teal" name="hail"></q-icon> อาชีพ:</span>
-              {{ parentEntityItem.ocupation }}
-            </li>
-            <li class="q-mb-xs">
-              <span
-                ><q-icon color="teal" name="groups_3"></q-icon>
-                รหัสไปรษณีย์:</span
-              >
-              {{ parentEntityItem?.zip_code }}
-            </li>
-          </ul>
-        </div>
-        <div class="col-sm-6 q-mt-xl">
-          <div class="row fit">
-            <div class="col-sm-6 text-left">
-              <q-img
-                class="shadow-12"
-                width="200px"
-                height="200px"
-                :src="teacherEntityItem?.image.thumbnail"
-              ></q-img>
+        <div class="col-sm-3 text-center q-mt-lg">
+          <div
+            style="border-radius: 30px"
+            class="row bg-white shadow-6 justify-center"
+          >
+            <div v-if="conductEntityItem.length > 0" class="col-sm-12 q-pt-sm">
+              <chart-conduct :point="conductEntityItem" />
             </div>
-            <div class="col-sm-6">
-              <ul class="q-px-md q-py-none">
+            <div v-else class="q-py-md">
+              <p class="text-center">
+                ไม่พบข้อมูลการให้คะแนน<q-icon name="close" color="red"></q-icon>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 q-mt-lg q-ml-md">
+          <div class="row bg-white shadow-12" style="border-radius: 30px">
+            <div class="col-sm-3 self-center">
+              <q-img
+                class="q-ml-md shadow-10"
+                width="100px"
+                height="140px"
+                :src="parentEntityItem.image?.thumbnail"
+              >
+              </q-img>
+            </div>
+            <div class="col-sm-7">
+              <ul class="">
                 <li class="q-mb-xs">
                   <span
                     ><q-icon color="teal" name="person"></q-icon>
@@ -338,57 +343,41 @@
                   >
                   &nbsp;
 
-                  {{
-                    teacherEntityItem?.first_name +
-                    " " +
-                    teacherEntityItem?.last_name
-                  }}
+                  {{ parentEntityItem.first_name }} นามสกุล
+                  {{ parentEntityItem.last_name }}
                 </li>
                 <li class="q-mb-xs">
                   <span
                     ><q-icon color="teal" name="account_circle"></q-icon>
-                    ชื่อเล่น: ครู </span
-                  >{{ teacherEntityItem?.nick_name }}
+                    ชื่อเล่น:</span
+                  >{{ parentEntityItem.nick_name }}
                 </li>
                 <li class="q-mb-xs">
                   <span
-                    ><q-icon color="teal" name="phone"></q-icon> ตำแหน่ง:</span
+                    ><q-icon color="teal" name="phone"></q-icon> เบอร์โทร:</span
                   >
-                  {{ teacherEntityItem?.position }}
+                  {{ parentEntityItem.phone }}
                 </li>
                 <li class="q-mb-xs">
                   <span
                     ><q-icon color="teal" name="meeting_room"></q-icon>
-                    ครูควบคุมห้อง:</span
+                    อีเมล:</span
                   >
-                  {{ teacherEntityItem?.room }}
+                  {{ parentEntityItem.email }}
                 </li>
 
                 <li class="q-mb-xs">
+                  <span><q-icon color="teal" name="hail"></q-icon> อาชีพ:</span>
+                  {{ parentEntityItem.ocupation }}
+                </li>
+                <li class="q-mb-xs">
                   <span
-                    ><q-icon color="teal" name="hail"></q-icon> โรงเรียน:</span
+                    ><q-icon color="teal" name="groups_3"></q-icon>
+                    รหัสไปรษณีย์:</span
                   >
-                  เตรียมอนุบาล
+                  {{ parentEntityItem?.zip_code }}
                 </li>
               </ul>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-5 q-mt-xl text-center">
-          <div
-            style="border-radius: 30px"
-            class="row bg-white shadow-6 justify-start"
-          >
-            <div
-              v-if="conductEntityItem.length > 0"
-              class="col-sm-10 q-pt-sm q-pl-xl"
-            >
-              <chart-conduct :point="conductEntityItem" />
-            </div>
-            <div v-else class="col-12 q-py-md">
-              <p class="text-center">
-                ไม่พบข้อมูลการให้คะแนน<q-icon name="close" color="red"></q-icon>
-              </p>
             </div>
           </div>
         </div>
@@ -403,7 +392,7 @@ import {
   defineAsyncComponent, //chart
   onMounted,
 } from "vue";
-
+import ConductList from "src/components/ConductList.vue";
 import { StudentApi } from "src/api/StudentApi";
 import { useRoute } from "vue-router";
 import { ParentsApi } from "src/api/ParentsApi";
@@ -415,7 +404,7 @@ import { LocalStorage, useMeta } from "quasar";
 useMeta({ title: "หน้าหลัก" });
 const authenStore = useAuthenStore();
 const url = ref("https://picsum.photos/500/300");
-
+const pointData = ref([]);
 const route = useRoute();
 const birthYear = ref();
 const birthMonth = ref();
@@ -426,7 +415,7 @@ const monthAge = ref([]);
 const yearAge = ref([]);
 const { getOne } = StudentApi();
 const { getParentsStudentInfo } = ParentsApi();
-const { getConductAverage } = ConductApi();
+const { getConductAverage, getConductList } = ConductApi();
 const { getOneTeacher } = TeacherApi();
 const id = LocalStorage.getItem(studentKey);
 const teacherId = ref();
@@ -446,6 +435,11 @@ const fetchData = async () => {
   const teacherResponse = await getOneTeacher(teacherId.value);
   const parentsResponse = await getParentsStudentInfo(studentId.value);
   const conductResponse = await getConductAverage(studentId.value);
+  const responsePoint = await getConductList(studentId.value);
+  if (responsePoint) {
+    pointData.value = responsePoint.entity;
+    console.log("point", responsePoint);
+  }
 
   loading.value = false;
 
@@ -551,7 +545,7 @@ onMounted(async () => {
 
   box-sizing: border-box;
 }
-body.screen--lg {
+body.screen--md {
   .desktop {
     display: block;
     * p,
